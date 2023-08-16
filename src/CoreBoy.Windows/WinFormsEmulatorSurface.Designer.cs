@@ -36,7 +36,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             ClientSize = new System.Drawing.Size(1024, 768);
             Name = "WinFormsEmulatorSurface";
-            Text = "Recon's CoreBoy";
+            Text = "CoreBoy Green";
             ResumeLayout(false);
         }
 
