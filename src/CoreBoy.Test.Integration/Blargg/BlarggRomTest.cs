@@ -58,7 +58,7 @@ namespace CoreBoy.Test.Integration.Blargg
 
         private static FileInfo getPath(string name)
         {
-            var root = "C:\\Users\\David Whitney\\OneDrive\\Desktop\\coffee-gb-netcore\\CoreBoy.Test.Integration\\roms";
+            var root = "../../../roms/";
             return new FileInfo(Path.Combine(root, "blargg", name));
         }
     }
