@@ -1,34 +1,32 @@
-# CoreBoy
+# CoreBoy Green
 
-A .NET Core Gameboy emulator that started life as a port of Coffee-GB (https://github.com/trekawek/coffee-gb).
-MIT licensed, go nuts.
+A continuation of the .NET Core Gameboy emulator that started life as a port of Coffee-GB (https://github.com/trekawek/coffee-gb).
 
-# Docs
-
-This- 
+## Features
 
 * Runs Gameboy and Gameboy Color games.
 * Has a headless CLI mode
 * Has a Windows-Only WinForms UI
 * Can be used as a library in your own software
 
-# Pre-Reqs
+## Prerequisites
 
+*  Visual Studio 2022
 * .NET Core 3.1
 
-# Usage
+## Usage
 
-## Windows
+### Windows
 
 Just run `CoreBoy.Windows` and load a ROM from the file menu!
 
-## Mac / Linux
+### Mac / Linux
 
 Command line:
 
 Just run `CoreBoy.Avalonia` and load a ROM from the file menu!
 
-# Controls
+## Controls
 
 	LeftArrow = Left
 	RightArrow = Right
@@ -39,7 +37,7 @@ Just run `CoreBoy.Avalonia` and load a ROM from the file menu!
 	Enter = Start
 	Backspace = Select
 
-# Lineage and Contributors
+## Lineage and Contributors
 
 - Originally based on Coffee-GB (https://github.com/trekawek/coffee-gb).
 - Ported to .NET Core by David Whitney
