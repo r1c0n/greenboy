@@ -45,3 +45,5 @@ Just run `CoreBoy.Avalonia` and load a ROM from the file menu!
 - Ported to .NET Core by David Whitney
 - Avelonia UI contributed by Bogdan Bara (https://github.com/fknzxlegend1)
 - CoreBoy originally created by David Whitney (https://github.com/davidwhitney/CoreBoy)
+- [Fixed interpolation by samstalhandske](https://github.com/davidwhitney/CoreBoy/pull/5)
+- [Windows audio support by wcabus](https://github.com/davidwhitney/CoreBoy/pull/6)
