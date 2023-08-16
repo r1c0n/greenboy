@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CoreBoy.cpu.op
 {
-	public class Argument
+    public class Argument
     {
         public string Label { get; }
         public int OperandLength { get; }
@@ -22,7 +22,7 @@ namespace CoreBoy.cpu.op
                 new Argument("E").Handle((r, a, args) => r.E, (r, a, i1, value) => r.E = value),
                 new Argument("H").Handle((r, a, args) => r.H, (r, a, i1, value) => r.H = value),
                 new Argument("L").Handle((r, a, args) => r.L, (r, a, i1, value) => r.L = value),
-                
+
                 new Argument("AF", 0, false, DataType.D16)
                     .Handle((r, a, args) => r.AF, (r, a, i1, value) => r.SetAf(value)),
 
@@ -52,7 +52,7 @@ namespace CoreBoy.cpu.op
 
                 new Argument("a16", 2, false, DataType.D16)
                     .Handle((r, a, args) => BitUtils.ToWord(args), (r, a, i1, value) => throw new InvalidOperationException("Unsupported")),
-				
+
                 // _BC
                 new Argument("(BC)", 0, true, DataType.D8)
                     .Handle((r, a, args) => a.GetByte(r.BC), (r, a, i1, value) => a.SetByte(r.BC, value)),
@@ -82,7 +82,7 @@ namespace CoreBoy.cpu.op
         private Func<Registers, IAddressSpace, int[], int> _readFunc;
         private Action<Registers, IAddressSpace, int[], int> _writeAction;
 
-        public Argument(string label) 
+        public Argument(string label)
             : this(label, 0, false, DataType.D8)
         {
         }
@@ -95,7 +95,7 @@ namespace CoreBoy.cpu.op
             DataType = dataType;
         }
 
-		public Argument Handle(Func<Registers, IAddressSpace, int[], int> readFunc, Action<Registers, IAddressSpace, int[], int> writeAction)
+        public Argument Handle(Func<Registers, IAddressSpace, int[], int> readFunc, Action<Registers, IAddressSpace, int[], int> writeAction)
         {
             _readFunc = readFunc;
             _writeAction = writeAction;
@@ -103,6 +103,7 @@ namespace CoreBoy.cpu.op
         }
 
         public int Read(Registers registers, IAddressSpace addressSpace, int[] args) => _readFunc(registers, addressSpace, args);
+
         public void Write(Registers registers, IAddressSpace addressSpace, int[] args, int value) => _writeAction(registers, addressSpace, args, value);
 
         public static Argument Parse(string @string)

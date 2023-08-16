@@ -18,7 +18,9 @@ namespace CoreBoy.gpu
         }
 
         public int GetLength() => Pixels.Size();
+
         public void PutPixelToScreen() => _display.PutDmgPixel(DequeuePixel());
+
         public void DropPixel() => DequeuePixel();
 
         public int DequeuePixel()
@@ -60,7 +62,7 @@ namespace CoreBoy.gpu
                 }
             }
         }
-        
+
         private static int GetColor(int palette, int colorIndex) => 0b11 & (palette >> (colorIndex * 2));
 
         public void Clear()

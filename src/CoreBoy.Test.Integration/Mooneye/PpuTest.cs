@@ -1,6 +1,6 @@
-﻿using System.IO;
-using CoreBoy.Test.Integration.Support;
+﻿using CoreBoy.Test.Integration.Support;
 using NUnit.Framework;
+using System.IO;
 
 namespace CoreBoy.Test.Integration.Mooneye
 {

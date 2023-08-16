@@ -6,7 +6,6 @@ namespace CoreBoy.Test.Unit.Sound
     [TestFixture]
     public class LfsrTest
     {
-
         [Test]
         public void testLfsr()
         {

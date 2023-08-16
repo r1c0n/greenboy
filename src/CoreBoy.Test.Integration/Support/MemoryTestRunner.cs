@@ -1,11 +1,11 @@
-﻿using System.IO;
-using System.Text;
-using CoreBoy.controller;
+﻿using CoreBoy.controller;
 using CoreBoy.cpu;
 using CoreBoy.gpu;
 using CoreBoy.memory.cart;
 using CoreBoy.serial;
 using CoreBoy.sound;
+using System.IO;
+using System.Text;
 
 namespace CoreBoy.Test.Integration.Support
 {
@@ -43,7 +43,7 @@ namespace CoreBoy.Test.Integration.Support
                     status = GetTestResult(_gb);
                     divider = 0;
                 }
-                
+
                 _tracer.Collect(_gb.Cpu.Registers);
             }
 
@@ -58,7 +58,7 @@ namespace CoreBoy.Test.Integration.Support
             if (!_testStarted)
             {
                 var i = 0xa000;
-                foreach (var v in new[] {0x80, 0xde, 0xb0, 0x61})
+                foreach (var v in new[] { 0x80, 0xde, 0xb0, 0x61 })
                 {
                     if (mem.GetByte(i++) != v)
                     {
@@ -79,7 +79,7 @@ namespace CoreBoy.Test.Integration.Support
             var reg = gb.Cpu.Registers;
 
             int ii = reg.PC;
-            foreach (int v in new int[] {0xe5, 0xf5, 0xfa, 0x83, 0xd8})
+            foreach (int v in new int[] { 0xe5, 0xf5, 0xfa, 0x83, 0xd8 })
             {
                 if (mem.GetByte(ii++) != v)
                 {
@@ -87,7 +87,7 @@ namespace CoreBoy.Test.Integration.Support
                 }
             }
 
-            var c = (char) reg.A;
+            var c = (char)reg.A;
             _text.Append(c);
             _os?.Write(c);
 
@@ -97,7 +97,6 @@ namespace CoreBoy.Test.Integration.Support
 
         public class TestResult
         {
-
             private readonly int _status;
 
             private readonly string _text;

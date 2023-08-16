@@ -1,17 +1,16 @@
-﻿using System.IO;
-using System.Text;
-using CoreBoy.controller;
+﻿using CoreBoy.controller;
 using CoreBoy.cpu;
 using CoreBoy.gpu;
 using CoreBoy.memory.cart;
 using CoreBoy.serial;
 using CoreBoy.sound;
+using System.IO;
+using System.Text;
 
 namespace CoreBoy.Test.Integration.Support
 {
     public class SerialTestRunner : SerialEndpoint
     {
-
         private readonly Gameboy _gb;
         private readonly StringBuilder _text;
         private readonly TextWriter _os;
@@ -54,7 +53,7 @@ namespace CoreBoy.Test.Integration.Support
 
         public int transfer(int outgoing)
         {
-            _text.Append((char) outgoing);
+            _text.Append((char)outgoing);
             _os.Write(outgoing);
             _os.Flush();
             return 0;
@@ -73,7 +72,7 @@ namespace CoreBoy.Test.Integration.Support
 
             int i = regs.PC;
             bool found = true;
-            foreach (int v in new int[] {0x18, 0xfe})
+            foreach (int v in new int[] { 0x18, 0xfe })
             {
                 // jr fe
                 if (mem.GetByte(i++) != v)
@@ -89,7 +88,7 @@ namespace CoreBoy.Test.Integration.Support
             }
 
             i = regs.PC;
-            foreach (int v in new int[] {0xc3, BitUtils.GetLsb(i), BitUtils.GetMsb(i)})
+            foreach (int v in new int[] { 0xc3, BitUtils.GetLsb(i), BitUtils.GetMsb(i) })
             {
                 // jp pc
                 if (mem.GetByte(i++) != v)

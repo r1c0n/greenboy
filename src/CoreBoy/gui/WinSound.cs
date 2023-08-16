@@ -1,14 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using CoreBoy.sound;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
+using System;
+using System.Threading;
 
 namespace CoreBoy.gui
 {
-
     public class WinSound : ISoundOutput
     {
         private readonly byte[] _buffer = new byte[BufferSize];

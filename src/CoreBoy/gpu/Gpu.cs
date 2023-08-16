@@ -1,7 +1,7 @@
-using System.Linq;
 using CoreBoy.cpu;
 using CoreBoy.gpu.phase;
 using CoreBoy.memory;
+using System.Linq;
 
 namespace CoreBoy.gpu
 {
@@ -265,7 +265,7 @@ namespace CoreBoy.gpu
 
         private int GetStat()
         {
-            return _r.Get(GpuRegister.Stat) | (int) _mode |
+            return _r.Get(GpuRegister.Stat) | (int)_mode |
                    (_r.Get(GpuRegister.Lyc) == _r.Get(GpuRegister.Ly) ? (1 << 2) : 0) | 0x80;
         }
 

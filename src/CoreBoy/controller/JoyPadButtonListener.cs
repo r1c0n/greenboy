@@ -1,5 +1,5 @@
-using System.Collections.Concurrent;
 using CoreBoy.cpu;
+using System.Collections.Concurrent;
 
 namespace CoreBoy.controller
 {

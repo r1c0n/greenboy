@@ -11,8 +11,11 @@ namespace CoreBoy.gpu
         event FrameProducedEventHandler OnFrameProduced;
 
         void PutDmgPixel(int color);
+
         void PutColorPixel(int gbcRgb);
+
         void RequestRefresh();
+
         void WaitForRefresh();
     }
 }

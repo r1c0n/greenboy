@@ -19,6 +19,7 @@ namespace CoreBoy.gpu
         }
 
         public int GetLength() => _pixels.Size();
+
         public void PutPixelToScreen() => _display.PutColorPixel(DequeuePixel());
 
         private int DequeuePixel()
@@ -40,16 +41,16 @@ namespace CoreBoy.gpu
 
         /*
         lcdc.0
-    
+
         when 0 => sprites are always displayed on top of the bg
-    
+
         bg tile attribute.7
-    
+
         when 0 => use oam priority bit
         when 1 => bg priority
-    
+
         sprite attribute.7
-    
+
         when 0 => sprite above bg
         when 1 => sprite above bg color 0
          */
@@ -102,7 +103,7 @@ namespace CoreBoy.gpu
                 }
             }
         }
-        
+
         public void Clear()
         {
             _pixels.Clear();

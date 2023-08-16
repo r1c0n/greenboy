@@ -1,5 +1,5 @@
-using System;
 using CoreBoy.memory;
+using System;
 
 namespace CoreBoy.sound
 {
@@ -126,7 +126,6 @@ namespace CoreBoy.sound
 
             s.SetByte(address, value);
         }
-
 
         public int GetByte(int address)
         {

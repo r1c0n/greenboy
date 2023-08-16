@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Threading;
 using CoreBoy.controller;
 using CoreBoy.gpu;
 using CoreBoy.memory.cart;
 using CoreBoy.serial;
 using CoreBoy.sound;
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace CoreBoy.gui
 {

@@ -1,5 +1,5 @@
-﻿using System;
-using CoreBoy.sound;
+﻿using CoreBoy.sound;
+using System;
 
 namespace CoreBoy.Test.Unit.Sound
 {

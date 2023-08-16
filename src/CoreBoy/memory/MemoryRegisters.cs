@@ -8,8 +8,8 @@ namespace CoreBoy.memory
     {
         private readonly Dictionary<int, IRegister> _registers;
         private readonly Dictionary<int, int> _values = new Dictionary<int, int>();
-        private readonly RegisterType[] _allowsWrite = {RegisterType.W, RegisterType.RW};
-        private readonly RegisterType[] _allowsRead = {RegisterType.R, RegisterType.RW};
+        private readonly RegisterType[] _allowsWrite = { RegisterType.W, RegisterType.RW };
+        private readonly RegisterType[] _allowsRead = { RegisterType.R, RegisterType.RW };
 
         public MemoryRegisters(params IRegister[] registers)
         {
@@ -75,9 +75,8 @@ namespace CoreBoy.memory
 
         public int GetByte(int address)
         {
-            var regType = _registers[address].Type; 
+            var regType = _registers[address].Type;
             return _allowsRead.Contains(regType) ? _values[address] : 0xff;
         }
     }
 }
-

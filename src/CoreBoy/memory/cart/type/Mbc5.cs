@@ -1,5 +1,5 @@
-using System;
 using CoreBoy.memory.cart.battery;
+using System;
 
 namespace CoreBoy.memory.cart.type
 {
@@ -28,7 +28,7 @@ namespace CoreBoy.memory.cart.type
         }
 
         public bool Accepts(int address) => address >= 0x0000 && address < 0x8000 || address >= 0xa000 && address < 0xc000;
-        
+
         public void SetByte(int address, int value)
         {
             if (address >= 0x0000 && address < 0x2000)

@@ -1,6 +1,6 @@
 namespace CoreBoy.sound
 {
-	public class VolumeEnvelope
+    public class VolumeEnvelope
     {
         private int _initialVolume;
         private int _envelopeDirection;
@@ -53,5 +53,4 @@ namespace CoreBoy.sound
 
         public int GetVolume() => IsEnabled() ? _volume : _initialVolume;
     }
-
 }

@@ -4,7 +4,7 @@ namespace CoreBoy.memory
 {
     public class ShadowAddressSpace : IAddressSpace
     {
-		private readonly IAddressSpace _addressSpace;
+        private readonly IAddressSpace _addressSpace;
         private readonly int _echoStart;
         private readonly int _targetStart;
         private readonly int _length;
@@ -18,9 +18,11 @@ namespace CoreBoy.memory
         }
 
         public bool Accepts(int address) => address >= _echoStart && address < _echoStart + _length;
+
         public void SetByte(int address, int value) => _addressSpace.SetByte(Translate(address), value);
+
         public int GetByte(int address) => _addressSpace.GetByte(Translate(address));
-        
+
         private int Translate(int address) => GetRelative(address) + _targetStart;
 
         private int GetRelative(int address)

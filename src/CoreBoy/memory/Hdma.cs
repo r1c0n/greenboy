@@ -1,5 +1,5 @@
-using System;
 using CoreBoy.gpu;
+using System;
 
 namespace CoreBoy.memory
 {
@@ -25,6 +25,7 @@ namespace CoreBoy.memory
         private int _tick;
 
         public Hdma(IAddressSpace addressSpace) => _addressSpace = addressSpace;
+
         public bool Accepts(int address) => address >= Hdma1 && address <= Hdma5;
 
         public void Tick()
@@ -93,6 +94,7 @@ namespace CoreBoy.memory
         }
 
         public void OnGpuUpdate(Gpu.Mode newGpuMode) => _gpuMode = newGpuMode;
+
         public void OnLcdSwitch(bool lcdEnabled) => _lcdEnabled = lcdEnabled;
 
         public bool IsTransferInProgress()

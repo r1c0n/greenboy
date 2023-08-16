@@ -1,6 +1,6 @@
 namespace CoreBoy.memory.cart.battery
 {
-	public interface IBattery
+    public interface IBattery
     {
         void LoadRam(int[] ram);
 
@@ -9,6 +9,5 @@ namespace CoreBoy.memory.cart.battery
         void LoadRamWithClock(int[] ram, long[] clockData);
 
         void SaveRamWithClock(int[] ram, long[] clockData);
-
     }
 }

@@ -6,11 +6,13 @@ namespace CoreBoy.sound
 
         // sweep parameters
         private int _period;
+
         private bool _negate;
         private int _shift;
 
         // current process variables
         private int _timer;
+
         private int _shadowFreq;
         private int _nr13;
         private int _nr14;
@@ -63,6 +65,7 @@ namespace CoreBoy.sound
         }
 
         public int GetNr13() => _nr13;
+
         public int GetNr14() => _nr14;
 
         public void Tick()
@@ -74,7 +77,7 @@ namespace CoreBoy.sound
             _i = 0;
 
             if (!_counterEnabled) return;
-            
+
             _timer--;
 
             if (_timer != 0) return;

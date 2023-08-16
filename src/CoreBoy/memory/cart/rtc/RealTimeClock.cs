@@ -30,22 +30,22 @@ namespace CoreBoy.memory.cart.rtc
 
         public int GetSeconds()
         {
-            return (int) (ClockTimeInSec() % 60);
+            return (int)(ClockTimeInSec() % 60);
         }
 
         public int GetMinutes()
         {
-            return (int) ((ClockTimeInSec() % (60 * 60)) / 60);
+            return (int)((ClockTimeInSec() % (60 * 60)) / 60);
         }
 
         public int GetHours()
         {
-            return (int) ((ClockTimeInSec() % (60 * 60 * 24)) / (60 * 60));
+            return (int)((ClockTimeInSec() % (60 * 60 * 24)) / (60 * 60));
         }
 
         public int GetDayCounter()
         {
-            return (int) (ClockTimeInSec() % (60 * 60 * 24 * 512) / (60 * 60 * 24));
+            return (int)(ClockTimeInSec() % (60 * 60 * 24 * 512) / (60 * 60 * 24));
         }
 
         public bool IsHalt()

@@ -4,9 +4,8 @@ using System.Text;
 
 namespace CoreBoy.debugging
 {
-	public class CommandArgument
+    public class CommandArgument
     {
-
         private readonly string _name;
 
         private readonly bool _required;

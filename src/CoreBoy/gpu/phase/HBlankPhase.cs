@@ -2,7 +2,6 @@ namespace CoreBoy.gpu.phase
 {
     public class HBlankPhase : IGpuPhase
     {
-
         private int _ticks;
 
         public HBlankPhase Start(int ticksInLine)
@@ -16,6 +15,5 @@ namespace CoreBoy.gpu.phase
             _ticks++;
             return _ticks < 456;
         }
-
     }
 }

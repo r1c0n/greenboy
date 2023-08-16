@@ -1,6 +1,6 @@
+using CoreBoy.cpu.op;
 using System.Collections.Generic;
 using System.Linq;
-using CoreBoy.cpu.op;
 
 namespace CoreBoy.cpu.opcode
 {

@@ -1,7 +1,7 @@
+using CoreBoy.cpu;
 using System;
 using System.Diagnostics;
 using System.IO;
-using CoreBoy.cpu;
 
 namespace CoreBoy.serial
 {

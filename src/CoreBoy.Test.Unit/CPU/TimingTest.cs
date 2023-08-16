@@ -1,9 +1,9 @@
-using System.Text;
 using CoreBoy.cpu;
 using CoreBoy.cpu.opcode;
 using CoreBoy.gpu;
 using CoreBoy.memory;
 using NUnit.Framework;
+using System.Text;
 
 namespace CoreBoy.Test.Unit.CPU
 {
@@ -20,7 +20,7 @@ namespace CoreBoy.Test.Unit.CPU
             _memory = new Ram(0x00, 0x10000);
             _cpu = new Cpu(_memory, new InterruptManager(false), null, new NullDisplay(), new SpeedMode());
         }
-        
+
         [Test]
         public void TestTiming()
         {
@@ -65,7 +65,6 @@ namespace CoreBoy.Test.Unit.CPU
             AssertTiming(16, 0xea, 0x00, 0x00); // LD (a16),A
             AssertTiming(8, 0x09); // ADD HL,BC
             AssertTiming(16, 0xc7); // RST 00H
-
 
             AssertTiming(8, 0x3e, 0x51); // LDA A,51
             AssertTiming(4, 0x1f); // RRA

@@ -1,8 +1,8 @@
 using CoreBoy.cpu.op;
-using IntRegistryFunction = System.Func<CoreBoy.cpu.Flags, int, int>;
-using BiIntRegistryFunction = System.Func<CoreBoy.cpu.Flags, int, int, int>;
-using AluFunctionsMap = System.Collections.Generic.Dictionary<CoreBoy.cpu.AluFunctions.FunctionKey, System.Func<CoreBoy.cpu.Flags, int, int>>;
 using AluBiFunctionsMap = System.Collections.Generic.Dictionary<CoreBoy.cpu.AluFunctions.FunctionKey, System.Func<CoreBoy.cpu.Flags, int, int, int>>;
+using AluFunctionsMap = System.Collections.Generic.Dictionary<CoreBoy.cpu.AluFunctions.FunctionKey, System.Func<CoreBoy.cpu.Flags, int, int>>;
+using BiIntRegistryFunction = System.Func<CoreBoy.cpu.Flags, int, int, int>;
+using IntRegistryFunction = System.Func<CoreBoy.cpu.Flags, int, int>;
 
 namespace CoreBoy.cpu
 {
@@ -12,8 +12,11 @@ namespace CoreBoy.cpu
         private readonly AluBiFunctionsMap _biFunctions = new AluBiFunctionsMap();
 
         public IntRegistryFunction GetFunction(string name, DataType argumentType) => _functions[new FunctionKey(name, argumentType)];
+
         public BiIntRegistryFunction GetFunction(string name, DataType arg1Type, DataType arg2Type) => _biFunctions[new FunctionKey(name, arg1Type, arg2Type)];
+
         private void AddFunction(string name, DataType dataType, IntRegistryFunction function) => _functions[new FunctionKey(name, dataType)] = function;
+
         private void AddFunction(string name, DataType dataType1, DataType dataType2, BiIntRegistryFunction function) => _biFunctions[new FunctionKey(name, dataType1, dataType2)] = function;
 
         public AluFunctions()
@@ -324,7 +327,7 @@ namespace CoreBoy.cpu
                 if (ReferenceEquals(null, obj)) return false;
                 if (ReferenceEquals(this, obj)) return true;
                 if (obj.GetType() != GetType()) return false;
-                return Equals((FunctionKey) obj);
+                return Equals((FunctionKey)obj);
             }
 
             public override int GetHashCode()
@@ -332,8 +335,8 @@ namespace CoreBoy.cpu
                 unchecked
                 {
                     var hashCode = (_name != null ? _name.GetHashCode() : 0);
-                    hashCode = (hashCode * 397) ^ (int) _type1;
-                    hashCode = (hashCode * 397) ^ (int) _type2;
+                    hashCode = (hashCode * 397) ^ (int)_type1;
+                    hashCode = (hashCode * 397) ^ (int)_type2;
                     return hashCode;
                 }
             }

@@ -7,7 +7,9 @@ namespace CoreBoy.memory
         private readonly IAddressSpace _addressSpace;
 
         public DmaAddressSpace(IAddressSpace addressSpace) => _addressSpace = addressSpace;
+
         public bool Accepts(int address) => true;
+
         public void SetByte(int address, int value) => throw new NotImplementedException("Unsupported");
 
         public int GetByte(int address) =>

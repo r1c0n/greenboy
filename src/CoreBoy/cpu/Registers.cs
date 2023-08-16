@@ -17,9 +17,9 @@ namespace CoreBoy.cpu
         public Flags Flags { get; } = new Flags();
 
         public int AF => A << 8 | Flags.FlagsByte;
-        public int BC =>  B << 8 | C;
+        public int BC => B << 8 | C;
         public int DE => D << 8 | E;
-        public int HL =>  H << 8 | L;
+        public int HL => H << 8 | L;
 
         public void SetAf(int af)
         {
@@ -46,9 +46,11 @@ namespace CoreBoy.cpu
         }
 
         public void IncrementPc() => PC = (PC + 1) & 0xffff;
+
         public void IncrementSp() => SP = (SP + 1) & 0xffff;
+
         public void DecrementSp() => SP = (SP - 1) & 0xffff;
-        
+
         public override string ToString()
         {
             return

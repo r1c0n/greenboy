@@ -34,7 +34,7 @@ namespace CoreBoy.memory
             _transferInProgress = false;
             _restarted = false;
             _ticks = 0;
-            
+
             for (var i = 0; i < 0xa0; i++)
             {
                 _oam.SetByte(0xfe00 + i, _addressSpace.GetByte(_from + i));
@@ -51,6 +51,7 @@ namespace CoreBoy.memory
         }
 
         public int GetByte(int address) => _regValue;
+
         public bool IsOamBlocked() => _restarted || _transferInProgress && _ticks >= 5;
     }
 }

@@ -1,16 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using CoreBoy.gpu;
+﻿using CoreBoy.gpu;
 using CoreBoy.memory;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CoreBoy.Test.Unit.GPU
 {
     [TestFixture, Parallelizable(ParallelScope.None)]
     public class PixelFifoTest
     {
-        private DmgPixelFifo _fifo; 
-        
+        private DmgPixelFifo _fifo;
+
         [SetUp]
         public void SetUp()
         {
@@ -23,7 +23,7 @@ namespace CoreBoy.Test.Unit.GPU
         public void TestEnqueue()
         {
             _fifo.Enqueue8Pixels(Zip(0b11001001, 0b11110000, false), TileAttributes.Empty);
-            Assert.AreEqual(new List<int>{3, 3, 2, 2, 1, 0, 0, 1}, ArrayQueueAsList(_fifo.Pixels));
+            Assert.AreEqual(new List<int> { 3, 3, 2, 2, 1, 0, 0, 1 }, ArrayQueueAsList(_fifo.Pixels));
         }
 
         [Test]

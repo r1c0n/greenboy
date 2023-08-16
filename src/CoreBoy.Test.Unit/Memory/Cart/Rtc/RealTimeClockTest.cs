@@ -1,6 +1,6 @@
-﻿using System;
-using CoreBoy.memory.cart.rtc;
+﻿using CoreBoy.memory.cart.rtc;
 using NUnit.Framework;
+using System;
 
 namespace CoreBoy.Test.Unit.Memory.Cart.Rtc
 {

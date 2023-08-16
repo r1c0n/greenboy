@@ -1,6 +1,6 @@
-﻿using System.IO;
+﻿using CoreBoy.cpu;
+using System.IO;
 using System.Text;
-using CoreBoy.cpu;
 
 namespace CoreBoy.Test.Integration.Support
 {
@@ -13,7 +13,7 @@ namespace CoreBoy.Test.Integration.Support
         public Tracer(string filename)
         {
             _log = new StringBuilder();
-            _outputFile = new StreamWriter($"{filename}.csharp.log") {AutoFlush = true};
+            _outputFile = new StreamWriter($"{filename}.csharp.log") { AutoFlush = true };
         }
 
         public void Collect(Registers state)

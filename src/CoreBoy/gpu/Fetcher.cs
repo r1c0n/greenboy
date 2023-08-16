@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using CoreBoy.gpu.phase;
 using CoreBoy.memory;
+using System.Collections.Generic;
 
 namespace CoreBoy.gpu
 {
@@ -136,13 +136,13 @@ namespace CoreBoy.gpu
                 return;
             }
 
-            stateSwitch:
+        stateSwitch:
 
             switch (_state)
             {
                 case State.ReadTileId:
                     _tileId = _videoRam0.GetByte(_mapAddress + _xOffset);
-                   
+
                     _tileAttributes = _gbc
                             ? TileAttributes.ValueOf(_videoRam1.GetByte(_mapAddress + _xOffset))
                             : TileAttributes.Empty;

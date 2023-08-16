@@ -5,7 +5,6 @@ namespace CoreBoy.Test.Unit.Sound
     [TestFixture, Parallelizable(ParallelScope.None)]
     public class LengthTriggerTest : AbstractLengthCounterTest
     {
-
         /*
          set_test 2,"Enabling in second half of length period ","shouldn't clock length"
          call begin
@@ -15,6 +14,7 @@ namespace CoreBoy.Test.Unit.Sound
          ld   a,2
          call end_nodelay
          */
+
         [Test]
         public void test02()
         {
@@ -34,6 +34,7 @@ namespace CoreBoy.Test.Unit.Sound
          ld   a,1
          call end_nodelay
          */
+
         [Test]
         public void test03()
         {
@@ -55,6 +56,7 @@ namespace CoreBoy.Test.Unit.Sound
          ld   a,2
          call end
          */
+
         [Test]
         public void test04()
         {
@@ -78,6 +80,7 @@ namespace CoreBoy.Test.Unit.Sound
          and  b
          jp   nz,test_failed
          */
+
         [Test]
         public void test05()
         {
@@ -100,6 +103,7 @@ namespace CoreBoy.Test.Unit.Sound
          lda  chan_maxlen; end triggers channel, which loads it with max length
          call end
          */
+
         [Test]
         public void test06()
         {
@@ -127,6 +131,7 @@ namespace CoreBoy.Test.Unit.Sound
          sub  2
          call end_nodelay
          */
+
         [Test]
         public void test07()
         {
@@ -152,6 +157,7 @@ namespace CoreBoy.Test.Unit.Sound
          dec  a
          call end_nodelay
          */
+
         [Test]
         public void test08()
         {
@@ -181,6 +187,7 @@ namespace CoreBoy.Test.Unit.Sound
          dec  a
          call end_nodelay
          */
+
         [Test]
         public void test09()
         {
@@ -199,6 +206,7 @@ namespace CoreBoy.Test.Unit.Sound
          lda  chan_maxlen
          call end_nodelay
          */
+
         [Test]
         public void test10()
         {
@@ -237,6 +245,7 @@ namespace CoreBoy.Test.Unit.Sound
          and  b
          jp   nz,test_failed
          */
+
         [Test]
         public void test12()
         {
@@ -265,6 +274,7 @@ namespace CoreBoy.Test.Unit.Sound
          wchn 4,$80
          ret
          */
+
         private void begin()
         {
             syncApu();
@@ -287,6 +297,7 @@ namespace CoreBoy.Test.Unit.Sound
          jp   nz,test_failed
          ret
          */
+
         private void end(int remainingLength)
         {
             delayClocks(8192 + 1024);
@@ -303,6 +314,5 @@ namespace CoreBoy.Test.Unit.Sound
         {
             Assert.AreEqual(remainingLength, lengthCounter.Length);
         }
-
     }
 }

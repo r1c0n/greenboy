@@ -1,7 +1,7 @@
+using CoreBoy.cpu.opcode;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CoreBoy.cpu.opcode;
 
 namespace CoreBoy.cpu
 {
@@ -209,7 +209,7 @@ namespace CoreBoy.cpu
                     }
                 }
             }
-            
+
             var commands = new List<Opcode>(0x100);
             var extCommands = new List<Opcode>(0x100);
 

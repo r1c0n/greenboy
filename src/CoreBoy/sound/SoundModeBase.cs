@@ -13,14 +13,21 @@ namespace CoreBoy.sound
         protected int Nr0, Nr1, Nr2, Nr3, Nr4;
 
         protected virtual int GetNr0() => Nr0;
+
         protected virtual int GetNr1() => Nr1;
+
         protected virtual int GetNr2() => Nr2;
+
         protected virtual int GetNr3() => Nr3;
+
         protected virtual int GetNr4() => Nr4;
 
         protected virtual void SetNr0(int value) => Nr0 = value;
+
         protected virtual void SetNr1(int value) => Nr1 = value;
+
         protected virtual void SetNr2(int value) => Nr2 = value;
+
         protected virtual void SetNr3(int value) => Nr3 = value;
 
         protected SoundModeBase(int offset, int length, bool gbc)
@@ -31,9 +38,11 @@ namespace CoreBoy.sound
         }
 
         public abstract int Tick();
+
         protected abstract void Trigger();
 
         public bool IsEnabled() => ChannelEnabled && DacEnabled;
+
         public virtual bool Accepts(int address) => address >= Offset && address < Offset + 5;
 
         public virtual void SetByte(int address, int value)
@@ -78,7 +87,6 @@ namespace CoreBoy.sound
                 _ => throw new ArgumentException("Illegal address for sound mode: " + Integer.ToHexString(address))
             };
         }
-
 
         protected virtual void SetNr4(int value)
         {

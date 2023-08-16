@@ -1,6 +1,6 @@
-using System;
 using CoreBoy.memory.cart.battery;
 using CoreBoy.memory.cart.rtc;
+using System;
 
 namespace CoreBoy.memory.cart.type
 {
@@ -33,13 +33,11 @@ namespace CoreBoy.memory.cart.type
             _clock.Deserialize(clockData);
         }
 
-
         public bool Accepts(int address)
         {
             return (address >= 0x0000 && address < 0x8000) ||
                    (address >= 0xa000 && address < 0xc000);
         }
-
 
         public void SetByte(int address, int value)
         {
@@ -101,7 +99,6 @@ namespace CoreBoy.memory.cart.type
 
             _selectedRomBank = bank;
         }
-
 
         public int GetByte(int address)
         {

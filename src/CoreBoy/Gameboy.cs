@@ -1,4 +1,3 @@
-using System.Threading;
 using CoreBoy.controller;
 using CoreBoy.cpu;
 using CoreBoy.gpu;
@@ -7,6 +6,7 @@ using CoreBoy.memory;
 using CoreBoy.memory.cart;
 using CoreBoy.serial;
 using CoreBoy.sound;
+using System.Threading;
 using Timer = CoreBoy.timer.Timer;
 
 namespace CoreBoy
@@ -32,9 +32,9 @@ namespace CoreBoy
         private readonly bool _gbc;
 
         public Gameboy(
-            GameboyOptions options, 
-            Cartridge rom, 
-            IDisplay display, 
+            GameboyOptions options,
+            Cartridge rom,
+            IDisplay display,
             IController controller,
             ISoundOutput soundOutput,
             SerialEndpoint serialEndpoint)
@@ -84,7 +84,7 @@ namespace CoreBoy
             Cpu = new Cpu(Mmu, interruptManager, _gpu, display, SpeedMode);
 
             interruptManager.DisableInterrupts(false);
-            
+
             if (!options.UseBootstrap)
             {
                 InitiliseRegisters();
@@ -112,7 +112,7 @@ namespace CoreBoy
         {
             var requestedScreenRefresh = false;
             var lcdDisabled = false;
-            
+
             while (!token.IsCancellationRequested)
             {
                 if (Pause)

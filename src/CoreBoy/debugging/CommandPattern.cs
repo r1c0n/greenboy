@@ -5,7 +5,6 @@ namespace CoreBoy.debugging
 {
     public class CommandPattern
     {
-
         private readonly List<string> _commandNames;
 
         private readonly List<CommandArgument> _arguments;
@@ -104,10 +103,10 @@ namespace CoreBoy.debugging
                             split.add(currentArg.toString());
                             currentArg.setLength(0);
                             break;
-    
+
                         case 0:
                             throw new IllegalArgumentException("Missing closing quote");
-    
+
                         default:
                             currentArg.append(c);
                             break;
@@ -117,7 +116,7 @@ namespace CoreBoy.debugging
                         case '"':
                             isEscaped = false;
                             break;
-    
+
                         case ' ':
                         case 0:
                             if (currentArg.Length() > 0) {
@@ -125,7 +124,7 @@ namespace CoreBoy.debugging
                                 currentArg.setLength(0);
                             }
                             break;
-    
+
                         default:
                             currentArg.append(c);
                             break;
@@ -139,7 +138,6 @@ namespace CoreBoy.debugging
 
         public class ParsedCommandLine
         {
-
             private readonly Dictionary<string, string> _argumentMap;
             private readonly List<string> _remainingArguments;
 
@@ -171,14 +169,15 @@ namespace CoreBoy.debugging
                 CommandNames = new List<string>(commandNames);
                 Arguments = new List<CommandArgument>();
             }
+
             public static Builder Create(string longName)
             {
-                return new Builder(new[] {longName});
+                return new Builder(new[] { longName });
             }
 
             public static Builder Create(string longName, string shortName)
             {
-                return new Builder(new[] {longName, shortName});
+                return new Builder(new[] { longName, shortName });
             }
 
             public Builder WithOptionalArgument(string name)
@@ -228,6 +227,5 @@ namespace CoreBoy.debugging
                 return new CommandPattern(this);
             }
         }
-
     }
 }

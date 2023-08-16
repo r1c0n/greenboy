@@ -10,7 +10,9 @@ namespace CoreBoy
         public static bool GetBit(this int byteValue, int position) => (byteValue & (1 << position)) != 0;
 
         public static int SetBit(this int byteValue, int position, bool value) => value ? SetBit(byteValue, position) : ClearBit(byteValue, position);
+
         public static int SetBit(this int byteValue, int position) => (byteValue | (1 << position)) & 0xff;
+
         public static int ClearBit(this int byteValue, int position) => ~(1 << position) & byteValue & 0xff;
     }
 }

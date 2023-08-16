@@ -1,10 +1,5 @@
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
 using CoreBoy.gpu;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
+using System.Threading;
 
 namespace CoreBoy.gui
 {
@@ -34,7 +29,7 @@ namespace CoreBoy.gui
             _rgb[_i++] = Colors[color];
             _i = _i % _rgb.Length;
         }
-        
+
         public void PutColorPixel(int gbcRgb)
         {
             _rgb[_i++] = TranslateGbcRgb(gbcRgb);
@@ -60,13 +55,13 @@ namespace CoreBoy.gui
                 Thread.Sleep(1);
             }
         }
-        
+
         public void Run(CancellationToken token)
         {
             SetRefreshFlag(false);
-            
+
             Enabled = true;
-            
+
             while (!token.IsCancellationRequested)
             {
                 if (!_doRefresh)
@@ -76,7 +71,6 @@ namespace CoreBoy.gui
                 }
 
                 RefreshScreen();
-
 
                 SetRefreshFlag(false);
             }
@@ -100,5 +94,4 @@ namespace CoreBoy.gui
             }
         }
     }
-
 }

@@ -1,7 +1,7 @@
+using CommandLine;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using CommandLine;
 
 namespace CoreBoy
 {
@@ -53,7 +53,6 @@ namespace CoreBoy
             ForceDmg = longParameters.Contains("force-dmg") || shortParams.Contains("d");
             ForceCgb = longParameters.Contains("force-cgb") || shortParams.Contains("c");
 
-
             UseBootstrap = longParameters.Contains("use-bootstrap") || shortParams.Contains("b");
             DisableBatterySaves = longParameters.Contains("disable-battery-saves") || shortParams.Contains("db");
             Debug = longParameters.Contains("debug");
@@ -69,7 +68,7 @@ namespace CoreBoy
                 throw new ArgumentException("force-dmg and force-cgb options are can't be used together");
             }
         }
-        
+
         public static void PrintUsage(TextWriter stream)
         {
             stream.WriteLine("Usage:");
@@ -97,7 +96,6 @@ namespace CoreBoy
             var result = parser.ParseArguments<GameboyOptions>(args)
                 .WithParsed(o => { o.Verify(); });
 
-
             if (result is Parsed<GameboyOptions> parsed)
             {
                 if (args.Length == 1 && args[0].Contains(".gb"))
@@ -115,4 +113,3 @@ namespace CoreBoy
         }
     }
 }
-    

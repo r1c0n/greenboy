@@ -38,6 +38,5 @@ namespace CoreBoy.Test.Integration.Support
 
             return returnVal;
         }
-
     }
 }

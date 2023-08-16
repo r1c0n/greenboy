@@ -92,5 +92,4 @@ namespace CoreBoy.sound
             Length = 0;
         }
     }
-
 }

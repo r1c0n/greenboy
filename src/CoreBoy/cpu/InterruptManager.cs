@@ -51,6 +51,7 @@ namespace CoreBoy.cpu
         }
 
         public void RequestInterrupt(InterruptType type) => _interruptFlag |= 1 << type.Ordinal;
+
         public void ClearInterrupt(InterruptType type) => _interruptFlag &= ~(1 << type.Ordinal);
 
         public void OnInstructionFinished()
@@ -73,8 +74,11 @@ namespace CoreBoy.cpu
         }
 
         public bool IsIme() => _ime;
+
         public bool IsInterruptRequested() => (_interruptFlag & _interruptEnabled) != 0;
+
         public bool IsHaltBug() => (_interruptFlag & _interruptEnabled & 0x1f) != 0 && !_ime;
+
         public bool Accepts(int address) => address == 0xff0f || address == 0xffff;
 
         public void SetByte(int address, int value)

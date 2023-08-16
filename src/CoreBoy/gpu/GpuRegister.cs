@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using CoreBoy.memory;
+using System.Collections.Generic;
 
 namespace CoreBoy.gpu
 {
@@ -25,7 +25,7 @@ namespace CoreBoy.gpu
             Address = address;
             Type = type;
         }
-        
+
         public static IEnumerable<IRegister> Values()
         {
             yield return Stat;

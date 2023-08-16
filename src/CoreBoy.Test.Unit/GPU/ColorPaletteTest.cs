@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using CoreBoy.gpu;
+﻿using CoreBoy.gpu;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Text;
 
 namespace CoreBoy.Test.Unit.GPU
 {
-    class ColorPaletteTest
+    internal class ColorPaletteTest
     {
         [Test]
         public void TestAutoIncrement()
@@ -25,8 +25,8 @@ namespace CoreBoy.Test.Unit.GPU
             p.SetByte(0xff69, 0x55);
             p.SetByte(0xff69, 0xff);
 
-            AssertArrayEquals(new[] {0xaa00, 0xbb11, 0xcc22, 0xdd33}, p.GetPalette(0));
-            AssertArrayEquals(new[] {0xee44, 0xff55, 0x0000, 0x0000}, p.GetPalette(1));
+            AssertArrayEquals(new[] { 0xaa00, 0xbb11, 0xcc22, 0xdd33 }, p.GetPalette(0));
+            AssertArrayEquals(new[] { 0xee44, 0xff55, 0x0000, 0x0000 }, p.GetPalette(1));
         }
 
         private static void AssertArrayEquals(IReadOnlyList<int> expected, IReadOnlyList<int> actual)

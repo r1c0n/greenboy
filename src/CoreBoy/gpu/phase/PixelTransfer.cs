@@ -20,9 +20,9 @@ namespace CoreBoy.gpu.phase
             _r = r;
             _lcdc = lcdc;
             _gbc = gbc;
-            
+
             _fifo = gbc
-                ? (IPixelFifo) new ColorPixelFifo(lcdc, display, bgPalette, oamPalette)
+                ? (IPixelFifo)new ColorPixelFifo(lcdc, display, bgPalette, oamPalette)
                 : new DmgPixelFifo(display, r);
 
             _fetcher = new Fetcher(_fifo, videoRam0, videoRam1, oemRam, lcdc, r, gbc);
@@ -138,6 +138,5 @@ namespace CoreBoy.gpu.phase
             _fetcher.StartFetching(_lcdc.GetWindowTileMapDisplay() + (winY / 0x08) * 0x20, _lcdc.GetBgWindowTileData(),
                 winX, _lcdc.IsBgWindowTileDataSigned(), winY % 0x08);
         }
-
     }
 }

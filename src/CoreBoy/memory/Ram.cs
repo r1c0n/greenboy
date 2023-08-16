@@ -16,6 +16,7 @@ namespace CoreBoy.memory
         }
 
         public bool Accepts(int address) => address >= _offset && address < _offset + _length;
+
         public void SetByte(int address, int value) => _space[address - _offset] = value;
 
         public int GetByte(int address)

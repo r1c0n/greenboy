@@ -1,5 +1,5 @@
-using System;
 using CoreBoy.cpu;
+using System;
 
 namespace CoreBoy.timer
 {
@@ -7,7 +7,7 @@ namespace CoreBoy.timer
     {
         private readonly SpeedMode _speedMode;
         private readonly InterruptManager _interruptManager;
-        private static readonly int[] FreqToBit = {9, 3, 5, 7};
+        private static readonly int[] FreqToBit = { 9, 3, 5, 7 };
 
         private int _div;
         private int _tac;

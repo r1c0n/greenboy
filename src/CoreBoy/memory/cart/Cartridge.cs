@@ -1,11 +1,11 @@
+using CoreBoy.memory.cart.battery;
+using CoreBoy.memory.cart.type;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
-using CoreBoy.memory.cart.battery;
-using CoreBoy.memory.cart.type;
 
 namespace CoreBoy.memory.cart
 {
@@ -21,7 +21,7 @@ namespace CoreBoy.memory.cart
 
         private readonly IAddressSpace _addressSpace;
         private int _dmgBootstrap;
-        
+
         public bool Gbc { get; }
         public string Title { get; }
 
@@ -30,14 +30,14 @@ namespace CoreBoy.memory.cart
             var file = options.RomFile;
             var rom = LoadFile(file);
             var type = CartridgeTypeExtensions.GetById(rom[0x0147]);
-            
+
             Title = GetTitle(rom);
             // LOG.debug("Cartridge {}, type: {}", title, type);
-            
+
             var gameboyType = GetFlag(rom[0x0143]);
             var romBanks = GetRomBanks(rom[0x0148]);
             var ramBanks = GetRamBanks(rom[0x0149]);
-            
+
             if (ramBanks == 0 && type.IsRam())
             {
                 // LOG.warn("RAM bank is defined to 0. Overriding to 1.");
@@ -74,7 +74,7 @@ namespace CoreBoy.memory.cart
             }
 
             _dmgBootstrap = options.UseBootstrap ? 0 : 1;
-            
+
             if (options.ForceCgb)
             {
                 Gbc = true;
@@ -86,9 +86,11 @@ namespace CoreBoy.memory.cart
                 case GameboyTypeFlag.NON_CGB:
                     Gbc = false;
                     break;
+
                 case GameboyTypeFlag.CGB:
                     Gbc = true;
                     break;
+
                 default:
                     // UNIVERSAL
                     Gbc = !options.ForceDmg;
@@ -101,7 +103,7 @@ namespace CoreBoy.memory.cart
             var t = new StringBuilder();
             for (var i = 0x0134; i < 0x0143; i++)
             {
-                var c = (char) rom[i];
+                var c = (char)rom[i];
                 if (c == 0)
                 {
                     break;
@@ -114,7 +116,7 @@ namespace CoreBoy.memory.cart
         }
 
         public bool Accepts(int address) => _addressSpace.Accepts(address) || address == 0xff50;
-        
+
         public void SetByte(int address, int value)
         {
             if (address == 0xff50)
@@ -127,15 +129,16 @@ namespace CoreBoy.memory.cart
             }
         }
 
-
         public int GetByte(int address)
         {
             switch (_dmgBootstrap)
             {
                 case 0 when !Gbc && (address >= 0x0000 && address < 0x0100):
                     return BootRom.GameboyClassic[address];
+
                 case 0 when Gbc && address >= 0x000 && address < 0x0100:
                     return BootRom.GameboyColor[address];
+
                 case 0 when Gbc && address >= 0x200 && address < 0x0900:
                     return BootRom.GameboyColor[address - 0x0100];
             }
@@ -149,7 +152,7 @@ namespace CoreBoy.memory.cart
             // TODO: If file is a zip, try extract gb, gbc or rom file to play
             // Deleted original java impl
 
-            return File.ReadAllBytes(file.FullName).Select(x => (int) x).ToArray();
+            return File.ReadAllBytes(file.FullName).Select(x => (int)x).ToArray();
         }
 
         private static int GetRomBanks(int id)
@@ -183,6 +186,7 @@ namespace CoreBoy.memory.cart
                 _ => throw new ArgumentException("Unsupported RAM size: " + Integer.ToHexString(id))
             };
         }
+
         public static GameboyTypeFlag GetFlag(int value)
         {
             return value switch

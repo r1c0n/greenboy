@@ -2,7 +2,6 @@ using System;
 
 namespace CoreBoy.sound
 {
-
     public class SoundMode1 : SoundModeBase
     {
         private int _freqDivider;
@@ -107,12 +106,16 @@ namespace CoreBoy.sound
             {
                 case 0:
                     return 0b00000001;
+
                 case 1:
                     return 0b10000001;
+
                 case 2:
                     return 0b10000111;
+
                 case 3:
                     return 0b01111110;
+
                 default:
                     throw new InvalidOperationException("Illegal state exception");
             }
@@ -134,5 +137,4 @@ namespace CoreBoy.sound
             return ChannelEnabled;
         }
     }
-
 }

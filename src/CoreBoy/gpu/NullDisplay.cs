@@ -5,6 +5,7 @@ namespace CoreBoy.gpu
     public class NullDisplay : IDisplay
     {
         public bool Enabled { get; set; }
+
         public event FrameProducedEventHandler OnFrameProduced;
 
         public void PutDmgPixel(int color)

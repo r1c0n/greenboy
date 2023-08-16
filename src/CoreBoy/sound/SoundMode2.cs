@@ -2,7 +2,6 @@ using System;
 
 namespace CoreBoy.sound
 {
-
     public class SoundMode2 : SoundModeBase
     {
         private int _freqDivider;
@@ -10,12 +9,12 @@ namespace CoreBoy.sound
         private int _i;
         private readonly VolumeEnvelope _volumeEnvelope;
 
-        public SoundMode2(bool gbc) 
+        public SoundMode2(bool gbc)
             : base(0xff15, 64, gbc)
         {
             _volumeEnvelope = new VolumeEnvelope();
         }
-        
+
         public override void Start()
         {
             _i = 0;
@@ -28,14 +27,12 @@ namespace CoreBoy.sound
             _volumeEnvelope.Start();
         }
 
-
         protected override void Trigger()
         {
             _i = 0;
             _freqDivider = 1;
             _volumeEnvelope.Trigger();
         }
-        
 
         public override int Tick()
         {

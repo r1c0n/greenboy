@@ -1,5 +1,5 @@
-using System;
 using CoreBoy.memory.cart.battery;
+using System;
 
 namespace CoreBoy.memory.cart.type
 {
@@ -11,7 +11,7 @@ namespace CoreBoy.memory.cart.type
             0x00, 0x08, 0x11, 0x1F, 0x88, 0x89, 0x00, 0x0E, 0xDC, 0xCC, 0x6E, 0xE6, 0xDD, 0xDD, 0xD9, 0x99,
             0xBB, 0xBB, 0x67, 0x63, 0x6E, 0x0E, 0xEC, 0xCC, 0xDD, 0xDC, 0x99, 0x9F, 0xBB, 0xB9, 0x33, 0x3E
         };
-        
+
         private readonly int _romBanks;
         private readonly int _ramBanks;
         private readonly int[] _cartridge;
@@ -236,5 +236,4 @@ namespace CoreBoy.memory.cart.type
             return logoCount > 1;
         }
     }
-
 }

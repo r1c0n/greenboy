@@ -1,13 +1,12 @@
-﻿using System;
-using CoreBoy.sound;
+﻿using CoreBoy.sound;
 using NUnit.Framework;
+using System;
 
 namespace CoreBoy.Test.Unit.Sound
 {
     [TestFixture, Parallelizable(ParallelScope.Self)]
     public class SweepTest
     {
-
         private readonly FrequencySweep sweep = new FrequencySweep();
 
         /*
@@ -23,6 +22,7 @@ namespace CoreBoy.Test.Unit.Sound
          wreg NR14,$C7
          call should_be_off
          */
+
         [Test]
         public void test04_2()
         {
@@ -48,6 +48,7 @@ namespace CoreBoy.Test.Unit.Sound
          delay_apu 1
          call should_be_almost_off
          */
+
         [Test]
         public void test04_3()
         {
@@ -68,6 +69,7 @@ namespace CoreBoy.Test.Unit.Sound
          delay_apu $20
          call should_be_almost_off
          */
+
         [Test]
         public void test04_4()
         {
@@ -88,6 +90,7 @@ namespace CoreBoy.Test.Unit.Sound
          delay_apu 1
          call should_be_almost_off
          */
+
         [Test]
         public void test04_5()
         {
@@ -107,6 +110,7 @@ namespace CoreBoy.Test.Unit.Sound
          wreg NR14,$C6
          call should_be_off
          */
+
         [Test]
         public void test04_6()
         {
@@ -126,6 +130,7 @@ namespace CoreBoy.Test.Unit.Sound
          delay_apu $20
          call should_be_almost_off
          */
+
         [Test]
         public void test04_7()
         {
@@ -147,6 +152,7 @@ namespace CoreBoy.Test.Unit.Sound
          delay_apu 1
          call should_be_almost_off
          */
+
         [Test]
         public void test04_8()
         {
@@ -170,6 +176,7 @@ namespace CoreBoy.Test.Unit.Sound
          wreg NR10,$11
          call should_be_almost_off
          */
+
         [Test]
         public void test04_9()
         {
@@ -192,6 +199,7 @@ namespace CoreBoy.Test.Unit.Sound
          delay_apu $20
          call should_be_almost_off
          */
+
         [Test]
         public void test04_10()
         {
@@ -213,6 +221,7 @@ namespace CoreBoy.Test.Unit.Sound
          delay_apu $20
          call should_be_almost_off
          */
+
         [Test]
         public void test04_11()
         {
@@ -233,6 +242,7 @@ namespace CoreBoy.Test.Unit.Sound
          delay_apu $20
          call should_be_almost_off
          */
+
         [Test]
         public void test04_12()
         {
@@ -257,6 +267,7 @@ namespace CoreBoy.Test.Unit.Sound
          delay_apu $11
          call should_be_almost_off
          */
+
         [Test]
         public void test05_02()
         {
@@ -280,6 +291,7 @@ namespace CoreBoy.Test.Unit.Sound
          wreg NR12,$08
          ret
          */
+
         private void begin()
         {
             syncSweep();
@@ -303,6 +315,7 @@ namespace CoreBoy.Test.Unit.Sound
          jp   nz,test_failed
          ret
          */
+
         private void shouldBeAlmostOff()
         {
             Assert.True(sweep.IsEnabled());
@@ -326,6 +339,7 @@ namespace CoreBoy.Test.Unit.Sound
          jr   nz,-
          ret
          */
+
         private void syncSweep()
         {
             wregNR(10, 0x11);

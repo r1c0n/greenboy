@@ -25,7 +25,6 @@ namespace CoreBoy.sound
             _volumeEnvelope.Start();
         }
 
-
         protected override void Trigger()
         {
             _lfsr.Reset();

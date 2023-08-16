@@ -1,5 +1,5 @@
-﻿using System.IO;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using System.IO;
 using static CoreBoy.Test.Integration.Support.RomTestUtils;
 
 namespace CoreBoy.Test.Integration.Blargg

@@ -1,11 +1,10 @@
-using System;
-using System.Collections.Generic;
 using CoreBoy.cpu.op;
 using CoreBoy.gpu;
+using System;
+using System.Collections.Generic;
 using static CoreBoy.cpu.BitUtils;
-
-using IntRegistryFunction = System.Func<CoreBoy.cpu.Flags, int, int>;
 using BiIntRegistryFunction = System.Func<CoreBoy.cpu.Flags, int, int, int>;
+using IntRegistryFunction = System.Func<CoreBoy.cpu.Flags, int, int>;
 
 namespace CoreBoy.cpu.opcode
 {
@@ -30,7 +29,9 @@ namespace CoreBoy.cpu.opcode
         private DataType _lastDataType;
 
         public int GetOpcode() => _opcode;
+
         public string GetLabel() => _label;
+
         public List<Op> GetOps() => _ops;
 
         public OpcodeBuilder(int opcode, string label)
@@ -49,8 +50,11 @@ namespace CoreBoy.cpu.opcode
         private class LoadOp : Op
         {
             private readonly Argument _arg;
+
             public LoadOp(Argument arg) => _arg = arg;
+
             public override bool ReadsMemory() => _arg.IsMemory;
+
             public override int OperandLength() => _arg.OperandLength;
 
             public override int Execute(Registers registers, IAddressSpace addressSpace, int[] args, int context) =>
@@ -68,12 +72,14 @@ namespace CoreBoy.cpu.opcode
             return this;
         }
 
-
         private class LoadWordOp : Op
         {
             private readonly int _value;
+
             public LoadWordOp(int value) => _value = value;
+
             public override int Execute(Registers registers, IAddressSpace addressSpace, int[] args, int context) => _value;
+
             public override string ToString() => $"0x{_value:X2} → [__]";
         }
 
@@ -87,8 +93,11 @@ namespace CoreBoy.cpu.opcode
         private class StoreA16Op1 : Op
         {
             private readonly Argument _arg;
+
             public StoreA16Op1(Argument arg) => _arg = arg;
+
             public override bool WritesMemory() => _arg.IsMemory;
+
             public override int OperandLength() => _arg.OperandLength;
 
             public override int Execute(Registers registers, IAddressSpace addressSpace, int[] args, int context)
@@ -103,8 +112,11 @@ namespace CoreBoy.cpu.opcode
         private class StoreA16Op2 : Op
         {
             private readonly Argument _arg;
+
             public StoreA16Op2(Argument arg) => _arg = arg;
+
             public override bool WritesMemory() => _arg.IsMemory;
+
             public override int OperandLength() => _arg.OperandLength;
 
             public override int Execute(Registers registers, IAddressSpace addressSpace, int[] args, int context)
@@ -119,8 +131,11 @@ namespace CoreBoy.cpu.opcode
         private class StoreLastDataType : Op
         {
             private readonly Argument _arg;
+
             public StoreLastDataType(Argument arg) => _arg = arg;
+
             public override bool WritesMemory() => _arg.IsMemory;
+
             public override int OperandLength() => _arg.OperandLength;
 
             public override int Execute(Registers registers, IAddressSpace addressSpace, int[] args, int context)
@@ -133,7 +148,6 @@ namespace CoreBoy.cpu.opcode
                 string.Format(_arg.DataType == DataType.D16 ? "[__] → {0}" : "[_] → {0}", _arg.Label);
         }
 
-
         public OpcodeBuilder Store(string target)
         {
             var arg = Argument.Parse(target);
@@ -142,7 +156,6 @@ namespace CoreBoy.cpu.opcode
             {
                 _ops.Add(new StoreA16Op1(arg));
                 _ops.Add(new StoreA16Op2(arg));
-
             }
             else if (_lastDataType == arg.DataType)
             {
@@ -159,6 +172,7 @@ namespace CoreBoy.cpu.opcode
         private class ProceedIfOp : Op
         {
             private readonly string _condition;
+
             public ProceedIfOp(string condition) => _condition = condition;
 
             public override bool Proceed(Registers registers)
@@ -182,11 +196,12 @@ namespace CoreBoy.cpu.opcode
             return this;
         }
 
-
         private class PushOp1 : Op
         {
             private readonly IntRegistryFunction _func;
+
             public PushOp1(IntRegistryFunction func) => _func = func;
+
             public override bool WritesMemory() => true;
 
             public override int Execute(Registers registers, IAddressSpace addressSpace, int[] args, int context)
@@ -198,7 +213,7 @@ namespace CoreBoy.cpu.opcode
 
             public override SpriteBug.CorruptionType? CausesOemBug(Registers registers, int context)
             {
-                return InOamArea(registers.SP) ? SpriteBug.CorruptionType.PUSH_1 : (SpriteBug.CorruptionType?) null;
+                return InOamArea(registers.SP) ? SpriteBug.CorruptionType.PUSH_1 : (SpriteBug.CorruptionType?)null;
             }
 
             public override string ToString() => "[_ ] → (SP--)";
@@ -207,7 +222,9 @@ namespace CoreBoy.cpu.opcode
         private class PushOp2 : Op
         {
             private readonly IntRegistryFunction _func;
+
             public PushOp2(IntRegistryFunction func) => _func = func;
+
             public override bool WritesMemory() => true;
 
             public override int Execute(Registers registers, IAddressSpace addressSpace, int[] args, int context)
@@ -219,13 +236,11 @@ namespace CoreBoy.cpu.opcode
 
             public override SpriteBug.CorruptionType? CausesOemBug(Registers registers, int context)
             {
-                return InOamArea(registers.SP) ? SpriteBug.CorruptionType.PUSH_2 : (SpriteBug.CorruptionType?) null;
+                return InOamArea(registers.SP) ? SpriteBug.CorruptionType.PUSH_2 : (SpriteBug.CorruptionType?)null;
             }
-
 
             public override string ToString() => "[ _] → (SP--)";
         }
-
 
         public OpcodeBuilder Push()
         {
@@ -235,10 +250,10 @@ namespace CoreBoy.cpu.opcode
             return this;
         }
 
-
         private class PopOp1 : Op
         {
             private readonly IntRegistryFunction _func;
+
             public PopOp1(IntRegistryFunction func) => _func = func;
 
             public override bool ReadsMemory()
@@ -253,18 +268,20 @@ namespace CoreBoy.cpu.opcode
                 return lsb;
             }
 
-
             public override SpriteBug.CorruptionType? CausesOemBug(Registers registers, int context)
             {
-                return InOamArea(registers.SP) ? SpriteBug.CorruptionType.POP_1 : (SpriteBug.CorruptionType?) null;
+                return InOamArea(registers.SP) ? SpriteBug.CorruptionType.POP_1 : (SpriteBug.CorruptionType?)null;
             }
+
             public override string ToString() => "(SP++) → [ _]";
         }
 
         private class PopOp2 : Op
         {
             private readonly IntRegistryFunction _func;
+
             public PopOp2(IntRegistryFunction func) => _func = func;
+
             public override bool ReadsMemory() => true;
 
             public override int Execute(Registers registers, IAddressSpace addressSpace, int[] args, int context)
@@ -273,10 +290,10 @@ namespace CoreBoy.cpu.opcode
                 registers.SP = _func(registers.Flags, registers.SP);
                 return context | (msb << 8);
             }
-            
+
             public override SpriteBug.CorruptionType? CausesOemBug(Registers registers, int context)
             {
-                return InOamArea(registers.SP) ? SpriteBug.CorruptionType.POP_2 : (SpriteBug.CorruptionType?) null;
+                return InOamArea(registers.SP) ? SpriteBug.CorruptionType.POP_2 : (SpriteBug.CorruptionType?)null;
             }
 
             public override string ToString() => "(SP++) → [_ ]";
@@ -307,8 +324,9 @@ namespace CoreBoy.cpu.opcode
             }
 
             public override bool ReadsMemory() => _arg2.IsMemory;
+
             public override int OperandLength() => _arg2.OperandLength;
-            
+
             public override int Execute(Registers registers, IAddressSpace addressSpace, int[] args, int v1)
             {
                 var v2 = _arg2.Read(registers, addressSpace, args);
@@ -352,7 +370,6 @@ namespace CoreBoy.cpu.opcode
                 return _func(registers.Flags, v1, _d8Value);
             }
 
-
             public override string ToString()
             {
                 return $"{_operation}({_d8Value:D},[_]) → [_]";
@@ -390,7 +407,7 @@ namespace CoreBoy.cpu.opcode
             public override SpriteBug.CorruptionType? CausesOemBug(Registers registers, int context) =>
                 OpcodeBuilder.CausesOemBug(_func, context)
                     ? SpriteBug.CorruptionType.INC_DEC
-                    : (SpriteBug.CorruptionType?) null;
+                    : (SpriteBug.CorruptionType?)null;
 
             public override string ToString() => _lastDataType == DataType.D16 ? $"{_operation}([__]) → [__]" : $"{_operation}([_]) → [_]";
         }
@@ -424,7 +441,7 @@ namespace CoreBoy.cpu.opcode
 
             public override SpriteBug.CorruptionType? CausesOemBug(Registers registers, int context)
             {
-                return OpcodeBuilder.CausesOemBug(_func, context) ? SpriteBug.CorruptionType.LD_HL : (SpriteBug.CorruptionType?) null;
+                return OpcodeBuilder.CausesOemBug(_func, context) ? SpriteBug.CorruptionType.LD_HL : (SpriteBug.CorruptionType?)null;
             }
 
             public override string ToString()
@@ -444,9 +461,11 @@ namespace CoreBoy.cpu.opcode
         private class BitHLOp : Op
         {
             private readonly int _bit;
+
             public BitHLOp(int bit) => _bit = bit;
+
             public override bool ReadsMemory() => true;
-            
+
             public override int Execute(Registers registers, IAddressSpace addressSpace, int[] args, int context)
             {
                 var value = addressSpace.GetByte(registers.HL);
@@ -460,7 +479,7 @@ namespace CoreBoy.cpu.opcode
 
                 return context;
             }
-            
+
             public override string ToString() => $"BIT({_bit:D},HL)";
         }
 
@@ -510,7 +529,6 @@ namespace CoreBoy.cpu.opcode
                 }
             }
 
-
             public override string ToString()
             {
                 return (_enable ? "enable" : "disable") + " interrupts";
@@ -532,6 +550,7 @@ namespace CoreBoy.cpu.opcode
         private class ExtraCycleOp : Op
         {
             public override bool ReadsMemory() => true;
+
             public override string ToString() => "wait cycle";
         }
 
@@ -544,6 +563,7 @@ namespace CoreBoy.cpu.opcode
         private class ForceFinishOp : Op
         {
             public override bool ForceFinishCycle() => true;
+
             public override string ToString() => "finish cycle";
         }
 

@@ -1,9 +1,9 @@
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace CoreBoy.gui
 {
@@ -13,6 +13,7 @@ namespace CoreBoy.gui
         public static readonly int DisplayHeight = 144;
 
         private readonly int[] _pixels;
+
         public GameboyDisplayFrame(int[] pixels) => _pixels = pixels;
 
         public IEnumerable<int[]> Rows()
@@ -54,7 +55,7 @@ namespace CoreBoy.gui
             return memoryStream.ToArray();
         }
     }
-    
+
     public static class GameboyDisplayFrameHelperExtensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -1,5 +1,5 @@
-using System;
 using CoreBoy.memory;
+using System;
 
 namespace CoreBoy.sound
 {
@@ -55,7 +55,6 @@ namespace CoreBoy.sound
 
             return 0xff;
         }
-
 
         public override void SetByte(int address, int value)
         {

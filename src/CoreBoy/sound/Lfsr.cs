@@ -5,7 +5,9 @@ namespace CoreBoy.sound
         public int Value { get; private set; }
 
         public Lfsr() => Reset();
+
         public void Start() => Reset();
+
         public void Reset() => Value = 0x7fff;
 
         public int NextBit(bool widthMode7)

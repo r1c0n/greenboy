@@ -1,11 +1,10 @@
+using CoreBoy.cpu.op;
+using CoreBoy.cpu.opcode;
+using CoreBoy.gpu;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading;
-using CoreBoy.cpu.op;
-using CoreBoy.cpu.opcode;
-using CoreBoy.gpu;
 
 namespace CoreBoy.cpu
 {
@@ -43,7 +42,6 @@ namespace CoreBoy.cpu
         private List<Op> _ops;
         private int _operandIndex;
         private int _opIndex;
-
 
         private int _opContext;
         private int _interruptFlag;
@@ -102,6 +100,7 @@ namespace CoreBoy.cpu
                 case State.IRQ_JUMP:
                     HandleInterrupt();
                     return;
+
                 case State.HALTED when _interruptManager.IsInterruptRequested():
                     State = State.OPCODE;
                     break;
@@ -235,7 +234,7 @@ namespace CoreBoy.cpu
                             {
                                 HandleSpriteBug(corruptionType.Value);
                             }
-                            
+
                             _opContext = op.Execute(Registers, _addressSpace, _operand, _opContext);
                             op.SwitchInterrupts(_interruptManager);
 
@@ -335,7 +334,7 @@ namespace CoreBoy.cpu
             }
 
             var stat = _addressSpace.GetByte(GpuRegister.Stat.Address);
-            if ((stat & 0b11) == (int) Gpu.Mode.OamSearch && _gpu.GetTicksInLine() < 79)
+            if ((stat & 0b11) == (int)Gpu.Mode.OamSearch && _gpu.GetTicksInLine() < 79)
             {
                 SpriteBug.CorruptOam(_addressSpace, type, _gpu.GetTicksInLine());
             }

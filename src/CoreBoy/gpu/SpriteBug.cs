@@ -2,10 +2,9 @@ using System;
 
 namespace CoreBoy.gpu
 {
-
     public static class SpriteBug
     {
-		public enum CorruptionType
+        public enum CorruptionType
         {
             INC_DEC,
             POP_1,
@@ -72,6 +71,7 @@ namespace CoreBoy.gpu
                     }
 
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
@@ -85,6 +85,5 @@ namespace CoreBoy.gpu
                 addressSpace.SetByte(0xfe00 + to + i, b);
             }
         }
-
     }
 }

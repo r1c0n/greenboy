@@ -1,5 +1,5 @@
-using System.IO;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace CoreBoy.memory.cart.battery
 {
@@ -11,7 +11,7 @@ namespace CoreBoy.memory.cart.battery
         {
             _saveFile = new FileInfo($"{romName}.sav.json");
         }
-        
+
         public void LoadRam(int[] ram)
         {
             if (!_saveFile.Exists)

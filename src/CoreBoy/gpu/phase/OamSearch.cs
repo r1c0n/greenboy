@@ -12,7 +12,6 @@ namespace CoreBoy.gpu.phase
 
         public sealed class SpritePosition
         {
-
             private readonly int _x;
             private readonly int _y;
             private readonly int _address;
@@ -72,7 +71,6 @@ namespace CoreBoy.gpu.phase
 
             return this;
         }
-
 
         public bool Tick()
         {

@@ -5,13 +5,13 @@ namespace CoreBoy.Test.Unit.Sound
     [TestFixture, Parallelizable(ParallelScope.None)]
     public class LengthCounterTest : AbstractLengthCounterTest
     {
-
         /*
          set_test 2,"Length becoming 0 should clear status"
          call begin
          delay_apu 3
          call should_be_almost_off
          */
+
         [Test]
         public void test02()
         {
@@ -27,6 +27,7 @@ namespace CoreBoy.Test.Unit.Sound
          delay_apu 9
          call should_be_almost_off
          */
+
         [Test]
         public void test03()
         {
@@ -45,6 +46,7 @@ namespace CoreBoy.Test.Unit.Sound
          call delay_apu_cycles
          call should_be_almost_off
          */
+
         [Test]
         public void test04()
         {
@@ -62,6 +64,7 @@ namespace CoreBoy.Test.Unit.Sound
          delay_apu 2
          call should_be_almost_off
          */
+
         [Test]
         public void test05()
         {
@@ -82,6 +85,7 @@ namespace CoreBoy.Test.Unit.Sound
          call delay_apu_cycles
          call should_be_almost_off
          */
+
         [Test]
         public void test06()
         {
@@ -104,6 +108,7 @@ namespace CoreBoy.Test.Unit.Sound
          call delay_apu_cycles
          call should_be_almost_off
          */
+
         [Test]
         public void test07()
         {
@@ -124,6 +129,7 @@ namespace CoreBoy.Test.Unit.Sound
          wchn 4,0       ; disable length
          call should_be_off
          */
+
         [Test]
         public void test08()
         {
@@ -144,6 +150,7 @@ namespace CoreBoy.Test.Unit.Sound
          delay_apu 3    ; clocks length to 1
          call should_be_almost_off
          */
+
         [Test]
         public void test09()
         {
@@ -163,6 +170,7 @@ namespace CoreBoy.Test.Unit.Sound
          wchn 1,-2      ; length = 2
          call should_be_off
          */
+
         [Test]
         public void test10()
         {
@@ -184,6 +192,7 @@ namespace CoreBoy.Test.Unit.Sound
          delay_apu 3    ; clocks length to 1
          call should_be_almost_off
          */
+
         [Test]
         public void test11()
         {
@@ -208,6 +217,7 @@ namespace CoreBoy.Test.Unit.Sound
          call delay_apu_cycles
          call should_be_almost_off
          */
+
         [Test]
         public void test12()
         {
@@ -229,6 +239,7 @@ namespace CoreBoy.Test.Unit.Sound
          wchn 4,$C0     ; trigger, enabling channel
          ret
          */
+
         private void begin()
         {
             syncApu();
@@ -247,6 +258,7 @@ namespace CoreBoy.Test.Unit.Sound
          jp   z,test_failed
          ret
          */
+
         private void shouldBeOn()
         {
             if (lengthCounter.Enabled)
@@ -267,6 +279,7 @@ namespace CoreBoy.Test.Unit.Sound
          jp   nz,test_failed
          ret
          */
+
         private void shouldBeAlmostOff()
         {
             shouldBeOn();

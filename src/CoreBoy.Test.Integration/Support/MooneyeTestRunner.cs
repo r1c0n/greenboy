@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using CoreBoy.controller;
+﻿using CoreBoy.controller;
 using CoreBoy.cpu;
 using CoreBoy.gpu;
 using CoreBoy.memory.cart;
 using CoreBoy.serial;
 using CoreBoy.sound;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace CoreBoy.Test.Integration.Support
 {
@@ -21,7 +21,7 @@ namespace CoreBoy.Test.Integration.Support
 
         public MooneyeTestRunner(FileInfo romFileInfo, TextWriter os, bool trace)
         {
-            _tracer = trace ? (ITracer) new Tracer(romFileInfo.Name) : new NullTracer();
+            _tracer = trace ? (ITracer)new Tracer(romFileInfo.Name) : new NullTracer();
 
             var opts = new List<string>();
             if (romFileInfo.ToString().EndsWith("-C.gb") || romFileInfo.ToString().EndsWith("-cgb.gb"))
@@ -37,7 +37,7 @@ namespace CoreBoy.Test.Integration.Support
             opts.Add("db");
             var options = new GameboyOptions(romFileInfo, new List<string>(), opts);
             var cart = new Cartridge(options);
-            _gb = new Gameboy(options, cart, new NullDisplay(), new NullController(), new NullSoundOutput(), 
+            _gb = new Gameboy(options, cart, new NullDisplay(), new NullController(), new NullSoundOutput(),
                 new NullSerialEndpoint());
             Console.WriteLine("System type: " + (cart.Gbc ? "CGB" : "DMG"));
             Console.WriteLine("Bootstrap: " + (options.UseBootstrap ? "enabled" : "disabled"));
@@ -60,18 +60,18 @@ namespace CoreBoy.Test.Integration.Support
                     DisplayProgress();
                     divider = 0;
                 }
-                
+
                 _tracer.Collect(_gb.Cpu.Registers);
             }
 
             _tracer.Save();
 
-            return _registers.A == 0 
-                   && _registers.B == 3 
-                   && _registers.C == 5 
-                   && _registers.D == 8 
-                   && _registers.E == 13 
-                   && _registers.H == 21 
+            return _registers.A == 0
+                   && _registers.B == 3
+                   && _registers.C == 5
+                   && _registers.D == 8
+                   && _registers.E == 13
+                   && _registers.H == 21
                    && _registers.L == 34;
         }
 
@@ -111,6 +111,5 @@ namespace CoreBoy.Test.Integration.Support
 
             return found;
         }
-
     }
 }

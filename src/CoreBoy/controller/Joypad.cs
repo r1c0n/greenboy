@@ -1,5 +1,5 @@
-using System.Collections.Concurrent;
 using CoreBoy.cpu;
+using System.Collections.Concurrent;
 
 namespace CoreBoy.controller
 {
@@ -17,7 +17,6 @@ namespace CoreBoy.controller
         {
             return address == 0xff00;
         }
-
 
         public void SetByte(int address, int value)
         {
