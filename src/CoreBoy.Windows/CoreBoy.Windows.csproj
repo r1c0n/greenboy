@@ -5,9 +5,10 @@
     <LangVersion>8.0</LangVersion>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>CoreBoy.Windows</RootNamespace>
-    <AssemblyName>CoreBoy.Windows</AssemblyName>
+    <AssemblyName>CoreBoyGreen_win-x64</AssemblyName>
     <StartupObject>CoreBoy.Windows.Program</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
