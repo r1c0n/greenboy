@@ -37,6 +37,17 @@ Just run `CoreBoy.Avalonia` and load a ROM from the file menu!
 	Enter = Start
 	Backspace = Select
 
+## Roadmap
+
+- [ ] Support emulation for all Game Boy consoles
+	- [x] Game Boy Classic
+	- [x] Game Boy Color
+	- [ ] Game Boy Advance
+- [ ] All necessary features have been added `(Subject to change)`
+	- [x] Audio (Windows)
+	- [ ] Savegames
+	- [ ] Controller input (XBOX, PlayStation)
+
 ## Lineage and Contributors
 
 - Originally based on Coffee-GB (https://github.com/trekawek/coffee-gb).
