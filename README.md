@@ -39,7 +39,7 @@ Just run `CoreBoy.Avalonia` and load a ROM from the file menu!
 
 ## Roadmap
 
-- [ ] Support emulation for all Game Boy consoles
+- [ ] Emulation for all Game Boy consoles
 	- [x] Game Boy Classic
 	- [x] Game Boy Color
 	- [ ] Game Boy Advance
@@ -47,6 +47,7 @@ Just run `CoreBoy.Avalonia` and load a ROM from the file menu!
 	- [x] Audio (Windows)
 	- [ ] Savegames
 	- [ ] Controller input (XBOX, PlayStation)
+	- [ ] Customizable keybinds
 
 ## Lineage and Contributors
 
