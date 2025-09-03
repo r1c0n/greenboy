@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <LangVersion>8.0</LangVersion>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net9.0-windows7.0</TargetFramework>
     <RootNamespace>CoreBoy.Windows</RootNamespace>
     <AssemblyName>CoreBoyGreen_win-x64</AssemblyName>
     <StartupObject>CoreBoy.Windows.Program</StartupObject>

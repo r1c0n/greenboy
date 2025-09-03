@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using CoreBoy.controller;
+using CoreBoy.gui;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using CoreBoy.controller;
-using CoreBoy.gui;
 using Button = CoreBoy.controller.Button;
 
 namespace CoreBoy.Windows
@@ -41,7 +42,7 @@ namespace CoreBoy.Windows
                     {
                         DropDownItems =
                         {
-                            new ToolStripMenuItem("Load ROM", null, (sender, args) => { StartEmulation(); }),
+                            new ToolStripMenuItem("Load ROM", null, (sender, args) => { StartEmulationAsync(); }),
                             new ToolStripMenuItem("Pause", null, (sender, args) => { _emulator.TogglePause(); }),
                             new ToolStripMenuItem("Quit", null, (sender, args) => { Close(); })
                         }
@@ -88,17 +89,17 @@ namespace CoreBoy.Windows
 
             KeyDown += WinFormsEmulatorSurface_KeyDown;
             KeyUp += WinFormsEmulatorSurface_KeyUp;
-            Closed += (_, e) => { _cancellation.Cancel(); };
+            FormClosed += (_, e) => { _cancellation.Cancel(); };
         }
 
-        private void StartEmulation()
+        private async Task StartEmulationAsync()
         {
             if (_emulator.Active)
             {
                 _emulator.Stop(_cancellation);
                 _cancellation = new CancellationTokenSource();
                 _display.DisplayEnabled = false;
-                Thread.Sleep(100);
+                await Task.Delay(100);
             }
 
             using var openFileDialog = new OpenFileDialog
