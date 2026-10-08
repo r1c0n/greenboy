@@ -1,6 +1,6 @@
 # GreenBoy
 
-GreenBoy is a rebrand of CoreBoy Green (CBG), a continuation of [CoreBoy](https://github.com/davidwhitney/CoreBoy) by David Whitney. CoreBoy began as a .NET port of [Coffee-GB](https://github.com/trekawek/coffee-gb).
+GreenBoy is a continuation of [CoreBoy](https://github.com/davidwhitney/CoreBoy) by David Whitney. CoreBoy began as a .NET port of [Coffee-GB](https://github.com/trekawek/coffee-gb).
 
 ## Features
 
@@ -111,7 +111,6 @@ Each OS uploads a `test-results-<os>` artifact, including reports from failed te
 
 ## Lineage and Contributors
 
-- CoreBoy Green (CBG) continued CoreBoy and is now rebranded as GreenBoy.
 - Originally based on Coffee-GB (https://github.com/trekawek/coffee-gb).
 - [CoreBoy](https://github.com/davidwhitney/CoreBoy) created and ported to .NET Core by David Whitney.
 - Avalonia UI contributed by Bogdan Bara (https://github.com/fknzxlegend1)
