@@ -57,7 +57,21 @@ dotnet test src/GreenBoy.Test.Unit
 dotnet test src/GreenBoy.Test.Integration
 ```
 
-Integration tests use the bundled Blargg and Mooneye ROMs. Some ROMs expose existing emulation failures or reach their test timeout.
+Integration tests use the bundled Blargg and Mooneye ROMs. Five existing boot ROM failures are tagged `KnownBootFailure`; the full integration command above still runs them.
+
+To run the ROM regression checks used by CI:
+
+```sh
+dotnet test src/GreenBoy.Test.Integration --filter "TestCategory!=KnownBootFailure"
+```
+
+### Continuous integration
+
+GitHub Actions builds the Release solution and runs unit tests and ROM regressions on Windows and Ubuntu for pushes and pull requests. The Linux build uses `-p:EnableWindowsTargeting=true` to compile the WinForms project alongside the portable projects. The SDK selection is limited to stable .NET 10 releases by `global.json`.
+
+Known boot failures run in a separate, non-blocking step and remain visible in the logs and uploaded TRX reports. Remove each ROM from `KnownBootFailureRoms` in `src/GreenBoy.Test.Integration/Mooneye/GeneralTest.cs` when it is fixed so it becomes a required regression check. Every other active test is required to pass; tests already marked ignored retain that status.
+
+Each OS uploads a `test-results-<os>` artifact, including reports from failed test runs, retained for 14 days. The workflow can also be started manually from the Actions tab.
 
 ## Controls
 

@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+  DOTNET_NOLOGO: '1'
+
+jobs:
+  build-and-test:
+    name: Build and test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2025, ubuntu-24.04]
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.x'
+          dotnet-quality: ga
+
+      - name: Restore packages
+        run: dotnet restore src/GreenBoy.sln -p:EnableWindowsTargeting=true
+
+      - name: Build Release
+        id: build
+        run: dotnet build src/GreenBoy.sln --configuration Release --no-restore -p:EnableWindowsTargeting=true
+
+      - name: Run unit tests
+        run: >-
+          dotnet test src/GreenBoy.Test.Unit/GreenBoy.Test.Unit.csproj
+          --configuration Release --no-build --no-restore
+          --results-directory src/TestResults/unit
+          --logger "trx;LogFileName=unit.trx"
+
+      - name: Run ROM regressions
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: >-
+          dotnet test src/GreenBoy.Test.Integration/GreenBoy.Test.Integration.csproj
+          --configuration Release --no-build --no-restore
+          --filter "TestCategory!=KnownBootFailure"
+          --results-directory src/TestResults/roms
+          --logger "trx;LogFileName=roms.trx"
+
+      - name: Run known boot failures (non-blocking)
+        id: known_boot
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        continue-on-error: true
+        run: >-
+          dotnet test src/GreenBoy.Test.Integration/GreenBoy.Test.Integration.csproj
+          --configuration Release --no-build --no-restore
+          --filter "TestCategory=KnownBootFailure"
+          --results-directory src/TestResults/known-boot
+          --logger "trx;LogFileName=known-boot.trx"
+
+      - name: Report known boot failures
+        if: ${{ !cancelled() && steps.known_boot.outcome == 'failure' }}
+        run: Write-Output "::warning::Known boot ROM tests failed. See known-boot.trx in the test-results artifact."
+
+      - name: Upload test reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: test-results-${{ matrix.os }}
+          path: src/TestResults/**/*.trx
+          if-no-files-found: warn
+          retention-days: 14
