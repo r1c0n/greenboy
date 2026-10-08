@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading;
+using CommandLine;
 using GreenBoy.controller;
 using GreenBoy.gui;
 using Button = GreenBoy.controller.Button;
@@ -9,18 +12,39 @@ namespace GreenBoy.Cli
 {
     public class Program
     {
-        static void Main(string[] args)
-        {
-            var cancellation = new CancellationTokenSource();
-            var arguments = GameboyOptions.Parse(args);
-            var emulator = new Emulator(arguments) { Display = new BitmapDisplay() };
+        public static int Main(string[] args) => Run(args, Console.Out, Console.Error);
 
-            if (!arguments.RomSpecified)
+        public static int Run(string[] args, TextWriter output, TextWriter error)
+        {
+            var result = GameboyOptions.ParseArguments(args);
+            if (result is NotParsed<GameboyOptions> notParsed)
             {
-                GameboyOptions.PrintUsage(Console.Out);
-                Console.Out.Flush();
-                Environment.Exit(1);
+                var informational = notParsed.Errors.All(e =>
+                    e.Tag == ErrorType.HelpRequestedError || e.Tag == ErrorType.VersionRequestedError);
+                var writer = informational ? output : error;
+                writer.WriteLine(notParsed.Errors.Any(e => e.Tag == ErrorType.VersionRequestedError)
+                    ? $"GreenBoy {typeof(Program).Assembly.GetName().Version}"
+                    : GameboyOptions.GetHelp(result));
+                return informational ? 0 : 2;
             }
+
+            var arguments = ((Parsed<GameboyOptions>)result).Value;
+            try
+            {
+                arguments.Verify();
+                if (!arguments.RomSpecified)
+                    throw new ArgumentException("A ROM path is required. Use --help for usage.");
+                if (!arguments.RomFile.Exists)
+                    throw new ArgumentException($"The ROM path does not exist: {arguments.Rom}");
+            }
+            catch (ArgumentException exception)
+            {
+                error.WriteLine($"Error: {exception.Message}");
+                return 2;
+            }
+
+            var cancellation = new CancellationTokenSource();
+            var emulator = new Emulator(arguments) { Display = new BitmapDisplay() };
 
             if (arguments.Interactive)
             {
@@ -39,6 +63,7 @@ namespace GreenBoy.Cli
             }
 
             cancellation.Cancel();
+            return 0;
         }
     }
 

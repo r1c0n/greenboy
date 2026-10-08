@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GreenBoy\GreenBoy.csproj" />
+    <ProjectReference Include="..\GreenBoy.Cli\GreenBoy.Cli.csproj" />
   </ItemGroup>
 
 </Project>

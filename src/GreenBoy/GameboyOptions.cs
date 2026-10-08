@@ -2,32 +2,39 @@ using CommandLine;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using CommandLine.Text;
 
 namespace GreenBoy
 {
     public class GameboyOptions
     {
-        public FileInfo? RomFile => string.IsNullOrWhiteSpace(Rom) ? null : new FileInfo(Rom);
+        private string _rom;
 
-        [Option('r', "rom", Required = false, HelpText = "Rom file.")]
-        public string Rom { get; set; }
+        public FileInfo RomFile => string.IsNullOrWhiteSpace(Rom) ? null : new FileInfo(Rom);
 
-        [Option('d', "force-dmg", Required = false, HelpText = "ForceDmg.")]
+        [Option('r', "rom", Required = false, HelpText = "ROM file.")]
+        public string Rom { get => _rom ?? PositionalRoms?.FirstOrDefault(); set => _rom = value; }
+
+        [Value(0, MetaName = "ROM", Max = 1, HelpText = "ROM file (or use --rom).")]
+        public IEnumerable<string> PositionalRoms { get; set; } = Array.Empty<string>();
+
+        [Option('d', "force-dmg", Required = false, HelpText = "Emulate classic GB (DMG).")]
         public bool ForceDmg { get; set; }
 
-        [Option('c', "force-cgb", Required = false, HelpText = "ForceCgb.")]
+        [Option('c', "force-cgb", Required = false, HelpText = "Emulate color GB (CGB).")]
         public bool ForceCgb { get; set; }
 
-        [Option('b', "use-bootstrap", Required = false, HelpText = "UseBootstrap.")]
+        [Option('b', "use-bootstrap", Required = false, HelpText = "Start with the GB bootstrap.")]
         public bool UseBootstrap { get; set; }
 
-        [Option("disable-battery-saves", Required = false, HelpText = "disable-battery-saves.")]
+        [Option("disable-battery-saves", Required = false, HelpText = "Disable battery saves.")]
         public bool DisableBatterySaves { get; set; }
 
-        [Option("debug", Required = false, HelpText = "Debug.")]
+        [Option("debug", Required = false, HelpText = "Enable debug output.")]
         public bool Debug { get; set; }
 
-        [Option("headless", Required = false, HelpText = "headless.")]
+        [Option("headless", Required = false, HelpText = "Run without display, sound, or controller input.")]
         public bool Headless { get; set; }
 
         [Option("interactive", Required = false, HelpText = "Play on the console!")]
@@ -65,51 +72,53 @@ namespace GreenBoy
         {
             if (ForceDmg && ForceCgb)
             {
-                throw new ArgumentException("force-dmg and force-cgb options are can't be used together");
+                throw new ArgumentException("--force-dmg and --force-cgb cannot be used together.");
             }
+
+            if (Headless && Interactive)
+                throw new ArgumentException("--headless and --interactive cannot be used together.");
+
+            if (_rom != null && PositionalRoms.Any())
+                throw new ArgumentException("Specify the ROM either as a path or with --rom, not both.");
         }
 
         public static void PrintUsage(TextWriter stream)
         {
-            stream.WriteLine("Usage:");
-            stream.WriteLine("GreenBoy.Cli.exe my-totally-not-pirate-rom-file.gb");
-            stream.WriteLine();
-            stream.WriteLine("Available options:");
-            stream.WriteLine("  -d  --force-dmg                Emulate classic GB (DMG) for universal ROMs");
-            stream.WriteLine("  -c  --force-cgb                Emulate color GB (CGB) for all ROMs");
-            stream.WriteLine("  -b  --use-bootstrap            Start with the GB bootstrap");
-            stream.WriteLine("      --disable-battery-saves    Disable battery saves");
-            stream.WriteLine("      --debug                    Enable debug console");
-            stream.WriteLine("      --headless                 Start in the headless mode");
-            stream.WriteLine("      --interactive              Play on the console!");
+            stream.WriteLine(GetHelp(ParseArguments(new[] { "--help" })));
             stream.Flush();
+        }
+
+        public static string GetHelp(ParserResult<GameboyOptions> result) =>
+            HelpText.AutoBuild(result, help =>
+            {
+                help.Heading = "GreenBoy";
+                help.Copyright = string.Empty;
+                help.AdditionalNewLineAfterOption = false;
+                help.AddPreOptionsLine("Usage: GreenBoy.Cli [options] ROM");
+                return help;
+            }).ToString();
+
+        public static ParserResult<GameboyOptions> ParseArguments(string[] args)
+        {
+            using var parser = new Parser(cfg =>
+            {
+                cfg.AutoHelp = true;
+                cfg.HelpWriter = null;
+            });
+            return parser.ParseArguments<GameboyOptions>(args);
         }
 
         public static GameboyOptions Parse(string[] args)
         {
-            var parser = new Parser(cfg =>
-            {
-                cfg.AutoHelp = true;
-                cfg.HelpWriter = Console.Out;
-            });
-
-            var result = parser.ParseArguments<GameboyOptions>(args)
-                .WithParsed(o => { o.Verify(); });
-
+            var result = ParseArguments(args);
             if (result is Parsed<GameboyOptions> parsed)
             {
-                if (args.Length == 1 && args[0].Contains(".gb"))
-                {
-                    parsed.Value.Rom = args[0];
-                }
-
+                parsed.Value.Verify();
                 return parsed.Value;
             }
-            else
-            {
-                Console.WriteLine("Failed to parsed!");
-                return null;
-            }
+
+            Console.Out.WriteLine(GetHelp(result));
+            return null;
         }
     }
 }
