@@ -86,7 +86,7 @@ namespace GreenBoy.Test.Integration.Support
             {
                 if (_registers.A != 0)
                 {
-                    _os.Write(_registers.A);
+                    _os.Write((char)_registers.A);
                 }
             }
             else if (IsByteSequenceAtPc(0x7d, 0xe6, 0x1f, 0xee, 0x1f))
