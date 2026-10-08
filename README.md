@@ -1,6 +1,6 @@
 # GreenBoy
 
-A continuation of [CoreBoy Green (CBG)](https://gitlab.com/coreboy-green/emu), the .NET Game Boy emulator that started life as a port of [Coffee-GB](https://github.com/trekawek/coffee-gb).
+GreenBoy is a rebrand of CoreBoy Green (CBG), a continuation of [CoreBoy](https://github.com/davidwhitney/CoreBoy) by David Whitney. CoreBoy began as a .NET port of [Coffee-GB](https://github.com/trekawek/coffee-gb).
 
 ## Features
 
@@ -84,10 +84,9 @@ Integration tests use the bundled Blargg and Mooneye ROMs. Some ROMs expose exis
 
 ## Lineage and Contributors
 
-- GreenBoy continues [CoreBoy Green (CBG)](https://gitlab.com/coreboy-green/emu), maintained by OfficialB.
+- CoreBoy Green (CBG) continued CoreBoy and is now rebranded as GreenBoy.
 - Originally based on Coffee-GB (https://github.com/trekawek/coffee-gb).
-- Ported to .NET Core by David Whitney
+- [CoreBoy](https://github.com/davidwhitney/CoreBoy) created and ported to .NET Core by David Whitney.
 - Avalonia UI contributed by Bogdan Bara (https://github.com/fknzxlegend1)
-- CoreBoy originally created by David Whitney (https://github.com/davidwhitney/CoreBoy)
 - [Fixed interpolation by samstalhandske](https://github.com/davidwhitney/CoreBoy/pull/5)
 - [Windows audio support by wcabus](https://github.com/davidwhitney/CoreBoy/pull/6)
