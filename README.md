@@ -1,6 +1,6 @@
-# CoreBoy Green
+# GreenBoy
 
-A continuation of the .NET Core Gameboy emulator that started life as a port of Coffee-GB (https://github.com/trekawek/coffee-gb).
+A continuation of [CoreBoy Green (CBG)](https://gitlab.com/coreboy-green/emu), the .NET Game Boy emulator that started life as a port of [Coffee-GB](https://github.com/trekawek/coffee-gb).
 
 ## Features
 
@@ -18,13 +18,13 @@ A continuation of the .NET Core Gameboy emulator that started life as a port of 
 
 ### Windows
 
-Just run `CoreBoy.Windows` and load a ROM from the file menu!
+Just run `GreenBoy.Windows` and load a ROM from the file menu!
 
 ### Mac / Linux
 
 Command line:
 
-Just run `CoreBoy.Avalonia` and load a ROM from the file menu!
+Just run `GreenBoy.Avalonia` and load a ROM from the file menu!
 
 ## Controls
 
@@ -51,9 +51,10 @@ Just run `CoreBoy.Avalonia` and load a ROM from the file menu!
 
 ## Lineage and Contributors
 
+- GreenBoy continues [CoreBoy Green (CBG)](https://gitlab.com/coreboy-green/emu), maintained by OfficialB.
 - Originally based on Coffee-GB (https://github.com/trekawek/coffee-gb).
 - Ported to .NET Core by David Whitney
-- Avelonia UI contributed by Bogdan Bara (https://github.com/fknzxlegend1)
+- Avalonia UI contributed by Bogdan Bara (https://github.com/fknzxlegend1)
 - CoreBoy originally created by David Whitney (https://github.com/davidwhitney/CoreBoy)
 - [Fixed interpolation by samstalhandske](https://github.com/davidwhitney/CoreBoy/pull/5)
 - [Windows audio support by wcabus](https://github.com/davidwhitney/CoreBoy/pull/6)

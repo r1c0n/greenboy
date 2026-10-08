@@ -20,4 +20,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+GreenBoy continues CoreBoy Green (CBG), maintained by OfficialB: https://gitlab.com/coreboy-green/emu.
+
 Portions of this software include code borrowed from CoreBoy, which is owned by David Whitney and is also licensed under the MIT License. The CoreBoy source code can be found at: https://github.com/davidwhitney/CoreBoy/.
