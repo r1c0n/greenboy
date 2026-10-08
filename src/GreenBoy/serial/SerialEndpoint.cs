@@ -4,6 +4,9 @@ namespace GreenBoy.serial
     {
         bool externalClockPulsed();
 
+        /// <summary>
+        /// Exchanges a complete byte when a transfer finishes and returns the received byte.
+        /// </summary>
         int transfer(int outgoing);
     }
 
@@ -13,7 +16,7 @@ namespace GreenBoy.serial
 
         public int transfer(int outgoing)
         {
-            return (outgoing << 1) & 0xFF;
+            return 0xff;
         }
     }
 }

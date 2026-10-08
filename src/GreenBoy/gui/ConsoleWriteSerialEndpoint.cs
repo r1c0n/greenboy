@@ -10,7 +10,7 @@ namespace GreenBoy.gui
         public int transfer(int b)
         {
             Console.Write((char)b);
-            return (b << 1) & 0xFF;
+            return 0xff;
         }
     }
 }

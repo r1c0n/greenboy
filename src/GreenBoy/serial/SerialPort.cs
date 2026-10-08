@@ -29,37 +29,34 @@ namespace GreenBoy.serial
                 return;
             }
 
-            if (++_divider >= Gameboy.TicksPerSec / 8192 / (FastMode ? 4 : 1) / _speedMode.GetSpeedMode())
+            if (++_divider < Gameboy.TicksPerSec / 8192 / (FastMode ? 4 : 1) / _speedMode.GetSpeedMode())
             {
-                var clockPulsed = false;
-                if (InternalClockEnabled || _serialEndpoint.externalClockPulsed())
-                {
-                    _shiftClock++;
-                    clockPulsed = true;
-                }
-
-                if (_shiftClock >= 8)
-                {
-                    TransferInProgress = false;
-                    _interruptManager.RequestInterrupt(InterruptManager.InterruptType.Serial);
-                    return;
-                }
-
-                if (clockPulsed)
-                {
-                    try
-                    {
-                        _sb = _serialEndpoint.transfer(_sb);
-                    }
-                    catch (IOException e)
-                    {
-                        Debug.WriteLine($"Can't transfer byte {e}");
-                        _sb = 0;
-                    }
-                }
-
-                _divider = 0;
+                return;
             }
+
+            _divider = 0;
+            if (!InternalClockEnabled && !_serialEndpoint.externalClockPulsed())
+            {
+                return;
+            }
+
+            if (++_shiftClock < 8)
+            {
+                return;
+            }
+
+            try
+            {
+                _sb = _serialEndpoint.transfer(_sb);
+            }
+            catch (IOException e)
+            {
+                Debug.WriteLine($"Can't transfer byte {e}");
+                _sb = 0xff;
+            }
+
+            TransferInProgress = false;
+            _interruptManager.RequestInterrupt(InterruptManager.InterruptType.Serial);
         }
 
         public bool Accepts(int address)
