@@ -87,6 +87,13 @@ namespace GreenBoy.cpu
                         _display.Enabled = true;
                     }
 
+                    if (_haltBugMode)
+                    {
+                        // A pending EI/HALT interrupt returns to HALT, not the next instruction.
+                        Registers.PC = (Registers.PC - 1) & 0xffff;
+                        _haltBugMode = false;
+                    }
+
                     State = State.IRQ_READ_IF;
                 }
             }
@@ -209,13 +216,14 @@ namespace GreenBoy.cpu
                             {
                                 State = State.OPCODE;
                                 _haltBugMode = true;
-                                return;
                             }
                             else
                             {
                                 State = State.HALTED;
-                                return;
                             }
+
+                            _interruptManager.OnInstructionFinished();
+                            return;
                         }
 
                         if (_opIndex < _ops.Count)

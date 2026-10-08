@@ -75,7 +75,7 @@ namespace GreenBoy.cpu
 
         public bool IsIme() => _ime;
 
-        public bool IsInterruptRequested() => (_interruptFlag & _interruptEnabled) != 0;
+        public bool IsInterruptRequested() => (_interruptFlag & _interruptEnabled & 0x1f) != 0;
 
         public bool IsHaltBug() => (_interruptFlag & _interruptEnabled & 0x1f) != 0 && !_ime;
 
