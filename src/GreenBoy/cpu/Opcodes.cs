@@ -148,7 +148,7 @@ namespace GreenBoy.cpu
 
             for (int i = 0xc7, j = 0x00; i <= 0xf7; i += 0x10, j += 0x10)
             {
-                RegCmd(opcodes, i, $"RST {j:X2}H").Load("PC").Push().ForceFinish().LoadWord(j)
+                RegCmd(opcodes, i, $"RST {j:X2}H").ExtraCycle().Load("PC").Push().LoadWord(j)
                     .Store("PC");
             }
 
@@ -158,7 +158,7 @@ namespace GreenBoy.cpu
 
             for (int i = 0xcf, j = 0x08; i <= 0xff; i += 0x10, j += 0x10)
             {
-                RegCmd(opcodes, i, $"RST {j:X2}H").Load("PC").Push().ForceFinish().LoadWord(j)
+                RegCmd(opcodes, i, $"RST {j:X2}H").ExtraCycle().Load("PC").Push().LoadWord(j)
                     .Store("PC");
             }
 
