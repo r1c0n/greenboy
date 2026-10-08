@@ -33,6 +33,7 @@ namespace GreenBoy.gui
         public void PutColorPixel(int gbcRgb)
         {
             _rgb[_i++] = TranslateGbcRgb(gbcRgb);
+            _i %= _rgb.Length;
         }
 
         public static int TranslateGbcRgb(int gbcRgb)
@@ -48,30 +49,40 @@ namespace GreenBoy.gui
 
         public void RequestRefresh() => SetRefreshFlag(true);
 
-        public void WaitForRefresh()
+        public void WaitForRefresh() => WaitForRefresh(CancellationToken.None);
+
+        public void WaitForRefresh(CancellationToken token)
         {
-            while (_doRefresh)
+            using var registration = token.Register(PulseWaiters);
+            lock (_lockObject)
             {
-                Thread.Sleep(1);
+                while (_doRefresh && !token.IsCancellationRequested)
+                    Monitor.Wait(_lockObject);
             }
         }
 
         public void Run(CancellationToken token)
         {
-            SetRefreshFlag(false);
-
+            using var registration = token.Register(PulseWaiters);
             Enabled = true;
-
-            while (!token.IsCancellationRequested)
+            try
             {
-                if (!_doRefresh)
+                while (!token.IsCancellationRequested)
                 {
-                    Thread.Sleep(1);
-                    continue;
+                    lock (_lockObject)
+                    {
+                        while (!_doRefresh && !token.IsCancellationRequested)
+                            Monitor.Wait(_lockObject);
+                    }
+                    if (token.IsCancellationRequested) break;
+
+                    RefreshScreen();
+                    SetRefreshFlag(false);
                 }
-
-                RefreshScreen();
-
+            }
+            finally
+            {
+                Enabled = false;
                 SetRefreshFlag(false);
             }
         }
@@ -91,7 +102,13 @@ namespace GreenBoy.gui
             lock (_lockObject)
             {
                 _doRefresh = flag;
+                Monitor.PulseAll(_lockObject);
             }
+        }
+
+        private void PulseWaiters()
+        {
+            lock (_lockObject) Monitor.PulseAll(_lockObject);
         }
     }
 }

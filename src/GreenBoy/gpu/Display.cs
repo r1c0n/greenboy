@@ -1,4 +1,5 @@
 using GreenBoy.gui;
+using System.Threading;
 
 namespace GreenBoy.gpu
 {
@@ -17,5 +18,7 @@ namespace GreenBoy.gpu
         void RequestRefresh();
 
         void WaitForRefresh();
+
+        void WaitForRefresh(CancellationToken token) => WaitForRefresh();
     }
 }

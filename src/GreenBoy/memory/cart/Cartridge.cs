@@ -152,7 +152,10 @@ namespace GreenBoy.memory.cart
             // TODO: If file is a zip, try extract gb, gbc or rom file to play
             // Deleted original java impl
 
-            return File.ReadAllBytes(file.FullName).Select(x => (int)x).ToArray();
+            var bytes = File.ReadAllBytes(file.FullName);
+            if (bytes.Length < 0x150)
+                throw new InvalidDataException("The ROM is too short to contain a Game Boy cartridge header.");
+            return bytes.Select(x => (int)x).ToArray();
         }
 
         private static int GetRomBanks(int id)

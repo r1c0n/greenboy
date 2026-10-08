@@ -19,7 +19,8 @@ namespace GreenBoy
         public Cpu Cpu { get; }
         public SpeedMode SpeedMode { get; }
 
-        public bool Pause { get; set; }
+        private volatile bool _pause;
+        public bool Pause { get => _pause; set => _pause = value; }
 
         private readonly Gpu _gpu;
         private readonly Timer _timer;
@@ -27,6 +28,7 @@ namespace GreenBoy
         private readonly Hdma _hdma;
         private readonly IDisplay _display;
         private readonly Sound _sound;
+        private readonly ISoundOutput _soundOutput;
         private readonly SerialPort _serialPort;
 
         private readonly bool _gbc;
@@ -40,6 +42,7 @@ namespace GreenBoy
             SerialEndpoint serialEndpoint)
         {
             _display = display;
+            _soundOutput = soundOutput;
             _gbc = rom.Gbc;
             SpeedMode = new SpeedMode();
 
@@ -113,43 +116,50 @@ namespace GreenBoy
             var requestedScreenRefresh = false;
             var lcdDisabled = false;
 
-            while (!token.IsCancellationRequested)
+            try
             {
-                if (Pause)
+                while (!token.IsCancellationRequested)
                 {
-                    Thread.Sleep(1000);
-                    continue;
-                }
+                    if (Pause)
+                    {
+                        token.WaitHandle.WaitOne(50);
+                        continue;
+                    }
 
-                var newMode = Tick();
-                if (newMode.HasValue)
-                {
-                    _hdma.OnGpuUpdate(newMode.Value);
-                }
+                    var newMode = Tick();
+                    if (newMode.HasValue)
+                    {
+                        _hdma.OnGpuUpdate(newMode.Value);
+                    }
 
-                if (!lcdDisabled && !_gpu.IsLcdEnabled())
-                {
-                    lcdDisabled = true;
-                    _display.RequestRefresh();
-                    _hdma.OnLcdSwitch(false);
-                }
-                else if (newMode == Gpu.Mode.VBlank)
-                {
-                    requestedScreenRefresh = true;
-                    _display.RequestRefresh();
-                }
+                    if (!lcdDisabled && !_gpu.IsLcdEnabled())
+                    {
+                        lcdDisabled = true;
+                        _display.RequestRefresh();
+                        _hdma.OnLcdSwitch(false);
+                    }
+                    else if (newMode == Gpu.Mode.VBlank)
+                    {
+                        requestedScreenRefresh = true;
+                        _display.RequestRefresh();
+                    }
 
-                if (lcdDisabled && _gpu.IsLcdEnabled())
-                {
-                    lcdDisabled = false;
-                    _display.WaitForRefresh();
-                    _hdma.OnLcdSwitch(true);
+                    if (lcdDisabled && _gpu.IsLcdEnabled())
+                    {
+                        lcdDisabled = false;
+                        _display.WaitForRefresh(token);
+                        _hdma.OnLcdSwitch(true);
+                    }
+                    else if (requestedScreenRefresh && newMode == Gpu.Mode.OamSearch)
+                    {
+                        requestedScreenRefresh = false;
+                        _display.WaitForRefresh(token);
+                    }
                 }
-                else if (requestedScreenRefresh && newMode == Gpu.Mode.OamSearch)
-                {
-                    requestedScreenRefresh = false;
-                    _display.WaitForRefresh();
-                }
+            }
+            finally
+            {
+                _soundOutput.Stop();
             }
         }
 

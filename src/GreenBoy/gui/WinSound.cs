@@ -15,13 +15,15 @@ namespace GreenBoy.gui
         private int _tick;
         private readonly int _divider;
         private AudioPlaybackEngine _engine;
+        private readonly CancellationToken _cancellation;
 
         private const int BufferSize = 1024;
         public const int SampleRate = 22050;
 
-        public WinSound()
+        public WinSound(CancellationToken cancellation = default)
         {
             _divider = (int)(Gameboy.TicksPerSec / SampleRate);
+            _cancellation = cancellation;
         }
 
         public void Start()
@@ -58,7 +60,7 @@ namespace GreenBoy.gui
             }
 
             // wait until audio is done playing this data
-            while (_engine?.GetQueuedAudioLength() > BufferSize)
+            while (!_cancellation.IsCancellationRequested && _engine?.GetQueuedAudioLength() > BufferSize)
             {
                 Thread.Sleep(0);
             }
