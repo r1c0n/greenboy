@@ -17,6 +17,9 @@ namespace GreenBoy.gpu
 
         void RequestRefresh();
 
+        // Called between sessions after all display and CPU workers have exited.
+        void Reset() { }
+
         void WaitForRefresh();
 
         void WaitForRefresh(CancellationToken token) => WaitForRefresh();

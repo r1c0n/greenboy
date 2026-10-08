@@ -50,6 +50,19 @@ dotnet run --project src/GreenBoy.Cli -- game.gb
 
 Add `--interactive` to play in the console.
 
+Use `--help` or `--version` without a ROM. A ROM can also be supplied with `--rom game.gb`.
+Help and version requests exit with code 0, invalid arguments with code 2, and ROM startup or emulation failures with code 1.
+Press any key to stop non-interactive emulation, or Escape in interactive mode. Ctrl+C stops either mode;
+when input is redirected, non-interactive mode waits for Ctrl+C. Interactive mode requires a terminal.
+
+Both desktop apps wait for the previous ROM's workers to exit before starting the next ROM, and stop them when the window closes.
+Cancelling the ROM picker leaves the current game running.
+
+When using `Emulator` as a library, `Run(token)` starts workers in both normal and headless modes and returns immediately.
+Call `Stop()` or dispose the emulator to cancel and join its workers. `Stop()` leaves the caller's cancellation token usable;
+the compatibility overload `Stop(CancellationTokenSource)` also cancels the supplied source. Worker failures stop the session
+and are available through `LastError`.
+
 ## Tests
 
 ```sh

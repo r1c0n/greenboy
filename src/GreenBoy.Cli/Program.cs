@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -43,27 +44,71 @@ namespace GreenBoy.Cli
                 return 2;
             }
 
-            var cancellation = new CancellationTokenSource();
-            var emulator = new Emulator(arguments) { Display = new BitmapDisplay() };
-
-            if (arguments.Interactive)
+            if (arguments.Interactive && (Console.IsInputRedirected || Console.IsOutputRedirected))
             {
-                var ui = new CommandLineInteractivity();
-                emulator.Controller = ui;
-                emulator.Display.OnFrameProduced += ui.UpdateDisplay; 
-                emulator.Run(cancellation.Token);
-                ui.ProcessInput();
-            }
-            else
-            {
-                emulator.Run(cancellation.Token);
-                Console.WriteLine("Running headless.");
-                Console.WriteLine("Press ANY key to exit.");
-                Console.ReadKey(true);
+                error.WriteLine("Error: --interactive requires a terminal with console input and output.");
+                return 2;
             }
 
-            cancellation.Cancel();
-            return 0;
+            try
+            {
+                using var cancellation = new CancellationTokenSource();
+                using var emulator = new Emulator(arguments);
+                ConsoleCancelEventHandler onCancel = (_, eventArgs) =>
+                {
+                    eventArgs.Cancel = true;
+                    cancellation.Cancel();
+                };
+                Console.CancelKeyPress += onCancel;
+                try
+                {
+                    if (arguments.Interactive)
+                    {
+                        var ui = new CommandLineInteractivity();
+                        emulator.Controller = ui;
+                        emulator.Display.OnFrameProduced += ui.UpdateDisplay;
+                        emulator.Run(cancellation.Token);
+                        ui.ProcessInput(cancellation.Token, () => emulator.Active);
+                    }
+                    else
+                    {
+                        emulator.Run(cancellation.Token);
+                        output.WriteLine("Running headless.");
+                        output.WriteLine(Console.IsInputRedirected ? "Press Ctrl+C to exit." : "Press ANY key or Ctrl+C to exit.");
+                        while (!cancellation.IsCancellationRequested && emulator.Active)
+                        {
+                            if (!Console.IsInputRedirected && Console.KeyAvailable)
+                            {
+                                Console.ReadKey(true);
+                                break;
+                            }
+                            cancellation.Token.WaitHandle.WaitOne(25);
+                        }
+                    }
+                }
+                catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
+                {
+                }
+                finally
+                {
+                    Console.CancelKeyPress -= onCancel;
+                    cancellation.Cancel();
+                }
+
+                emulator.Stop();
+                if (emulator.LastError != null)
+                {
+                    error.WriteLine($"Error: {emulator.LastError.Message}");
+                    return 1;
+                }
+                return 0;
+            }
+            catch (Exception exception) when (exception is IOException || exception is InvalidDataException || exception is UnauthorizedAccessException ||
+                exception is ArgumentException || exception is InvalidOperationException || exception is TimeoutException)
+            {
+                error.WriteLine($"Error: {exception.Message}");
+                return 1;
+            }
         }
     }
 
@@ -76,11 +121,6 @@ namespace GreenBoy.Cli
         {
             Console.Clear();
             Console.SetCursorPosition(0, 0);
-            if (OperatingSystem.IsWindows())
-            {
-                Console.WindowHeight = 92;
-            }
-
             _controls = new Dictionary<ConsoleKey, Button>
             {
                 {ConsoleKey.LeftArrow, Button.Left},
@@ -96,36 +136,38 @@ namespace GreenBoy.Cli
 
         public void SetButtonListener(IButtonListener listener) => _listener = listener;
 
-        // Should probably be called "try to process input" amirite
-        // ☜(ﾟヮﾟ☜)  (❁´◡`❁)  ( •_•)>⌐■-■
-        public void ProcessInput()
+        public void ProcessInput(CancellationToken token = default, Func<bool> isRunning = null)
         {
             Button lastButton = null;
-            var input = Console.ReadKey(true);
-            while (input.Key != ConsoleKey.Escape)
+            long releaseAt = 0;
+            try
             {
-                var button = _controls.ContainsKey(input.Key) ? _controls[input.Key] : null;
-
-                if (button != null)
+                while (!token.IsCancellationRequested && (isRunning?.Invoke() ?? true))
                 {
-                    if (lastButton != button)
+                    if (lastButton != null && Stopwatch.GetTimestamp() >= releaseAt)
                     {
                         _listener?.OnButtonRelease(lastButton);
+                        lastButton = null;
                     }
 
-                    _listener?.OnButtonPress(button);
-
-                    var snapshot = button;
-                    new Thread(() =>
+                    if (!Console.KeyAvailable)
                     {
-                        Thread.Sleep(500);
-                        _listener?.OnButtonRelease(snapshot);
-                    }).Start(); // Yo dawn, I hear you like threads.
-
+                        token.WaitHandle.WaitOne(25);
+                        continue;
+                    }
+                    var input = Console.ReadKey(true);
+                    if (input.Key == ConsoleKey.Escape) break;
+                    if (!_controls.TryGetValue(input.Key, out var button)) continue;
+                    if (lastButton != null && lastButton != button)
+                        _listener?.OnButtonRelease(lastButton);
+                    _listener?.OnButtonPress(button);
                     lastButton = button;
+                    releaseAt = Stopwatch.GetTimestamp() + Stopwatch.Frequency / 2;
                 }
-
-                input = Console.ReadKey(true);
+            }
+            finally
+            {
+                if (lastButton != null) _listener?.OnButtonRelease(lastButton);
             }
         }
 

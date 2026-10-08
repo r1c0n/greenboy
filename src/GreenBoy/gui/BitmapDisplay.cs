@@ -1,4 +1,5 @@
 using GreenBoy.gpu;
+using System;
 using System.Threading;
 
 namespace GreenBoy.gui
@@ -48,6 +49,18 @@ namespace GreenBoy.gui
         }
 
         public void RequestRefresh() => SetRefreshFlag(true);
+
+        public void Reset()
+        {
+            lock (_lockObject)
+            {
+                Array.Clear(_rgb, 0, _rgb.Length);
+                _i = 0;
+                _doRefresh = false;
+                Enabled = false;
+                Monitor.PulseAll(_lockObject);
+            }
+        }
 
         public void WaitForRefresh() => WaitForRefresh(CancellationToken.None);
 

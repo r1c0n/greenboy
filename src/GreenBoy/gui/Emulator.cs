@@ -52,6 +52,7 @@ namespace GreenBoy.gui
 
                 try
                 {
+                    if (!Options.Headless) Display.Reset();
                     var gameboy = CreateGameboy(rom, cancellation.Token);
                     Gameboy = gameboy;
                     var workers = new List<Thread>();
@@ -62,7 +63,7 @@ namespace GreenBoy.gui
                     }
 
                     workers.Add(CreateWorker("GreenBoy emulation", () => gameboy.Run(cancellation.Token), cancellation, true));
-                    _runnables = workers.ToArray();
+                    Volatile.Write(ref _runnables, workers.ToArray());
                     foreach (var thread in _runnables) thread.Start();
                 }
                 catch
@@ -122,7 +123,7 @@ namespace GreenBoy.gui
                 if ((thread.ThreadState & ThreadState.Unstarted) == 0 && !thread.Join(TimeSpan.FromSeconds(5)))
                     throw new TimeoutException($"{thread.Name} did not stop. A new ROM cannot start until it exits.");
             }
-            _runnables = Array.Empty<Thread>();
+            Volatile.Write(ref _runnables, Array.Empty<Thread>());
             _cancellation?.Dispose();
             _cancellation = null;
         }

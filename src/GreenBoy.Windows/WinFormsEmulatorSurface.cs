@@ -1,9 +1,10 @@
 ﻿using GreenBoy.controller;
 using GreenBoy.gui;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Button = GreenBoy.controller.Button;
 
@@ -19,7 +20,6 @@ namespace GreenBoy.Windows
 
         private readonly Emulator _emulator;
         private readonly GameboyOptions _gameboyOptions;
-        private CancellationTokenSource _cancellation;
 
         public WinFormsEmulatorSurface()
         {
@@ -42,7 +42,7 @@ namespace GreenBoy.Windows
                     {
                         DropDownItems =
                         {
-                            new ToolStripMenuItem("Load ROM", null, (sender, args) => { StartEmulationAsync(); }),
+                            new ToolStripMenuItem("Load ROM", null, (sender, args) => { StartEmulation(); }),
                             new ToolStripMenuItem("Pause", null, (sender, args) => { _emulator.TogglePause(); }),
                             new ToolStripMenuItem("Quit", null, (sender, args) => { Close(); })
                         }
@@ -73,7 +73,6 @@ namespace GreenBoy.Windows
             AutoScaleMode = AutoScaleMode.Dpi;
             ClientSize = new Size(_display.Width, _display.Height + _menu.Height);
 
-            _cancellation = new CancellationTokenSource();
             _gameboyOptions = new GameboyOptions();
             _emulator = new Emulator(_gameboyOptions)
             {
@@ -89,19 +88,10 @@ namespace GreenBoy.Windows
 
             KeyDown += WinFormsEmulatorSurface_KeyDown;
             KeyUp += WinFormsEmulatorSurface_KeyUp;
-            FormClosed += (_, e) => { _cancellation.Cancel(); };
         }
 
-        private async Task StartEmulationAsync()
+        private void StartEmulation()
         {
-            if (_emulator.Active)
-            {
-                _emulator.Stop(_cancellation);
-                _cancellation = new CancellationTokenSource();
-                _display.DisplayEnabled = false;
-                await Task.Delay(100);
-            }
-
             using var openFileDialog = new OpenFileDialog
             {
                 Filter = "Gameboy ROMs (*.gb;*.gbc)|*.gb;*.gbc|Gameboy ROM (*.gb)|*.gb|Gameboy Color ROM (*.gbc)|*.gbc|All files (*.*)|*.*",
@@ -109,14 +99,18 @@ namespace GreenBoy.Windows
                 RestoreDirectory = true
             };
 
-            var (success, romPath) = openFileDialog.ShowDialog() == DialogResult.OK
-                ? (true, openFileDialog.FileName)
-                : (false, null);
-
-            if (success)
+            if (openFileDialog.ShowDialog(this) != DialogResult.OK || IsDisposed) return;
+            var previousRom = _gameboyOptions.Rom;
+            try
             {
-                _gameboyOptions.Rom = romPath;
-                _emulator.Run(_cancellation.Token);
+                _gameboyOptions.Rom = openFileDialog.FileName;
+                _emulator.Run(CancellationToken.None);
+            }
+            catch (Exception exception) when (exception is IOException || exception is InvalidDataException || exception is UnauthorizedAccessException ||
+                exception is ArgumentException || exception is InvalidOperationException || exception is TimeoutException)
+            {
+                _gameboyOptions.Rom = previousRom;
+                MessageBox.Show(this, exception.Message, "Unable to load ROM", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -165,8 +159,8 @@ namespace GreenBoy.Windows
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
+            _emulator.Dispose();
             base.OnFormClosed(e);
-            _display.Dispose();
         }
     }
 }

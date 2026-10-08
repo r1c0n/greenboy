@@ -18,21 +18,15 @@ namespace GreenBoy.Windows
         public static readonly int DisplayHeight = 144;
         public static readonly float AspectRatio = DisplayWidth / (DisplayHeight * 1f);
 
-        public static readonly int[] Colors = { 0xe6f8da, 0x99c886, 0x437969, 0x051f2a };
+        public static readonly int[] Colors = BitmapDisplay.Colors;
 
-        private readonly int[] _rgb;
+        private readonly BitmapDisplay _bitmapDisplay = new BitmapDisplay();
         private volatile byte[] _lastFrame;
-
-        private bool _doStop;
-        private bool _doRefresh;
-        private int _i;
-
-        private readonly object _lockObject = new object();
 
         public BitmapDisplayControl()
         {
-            _rgb = new int[DisplayWidth * DisplayHeight];
-            _lastFrame = new GameboyDisplayFrame(_rgb).ToBitmap();
+            _lastFrame = new GameboyDisplayFrame(new int[DisplayWidth * DisplayHeight]).ToBitmap();
+            _bitmapDisplay.OnFrameProduced += FillAndDrawBuffer;
             SetStyle(ControlStyles.Opaque | ControlStyles.Selectable, false);
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.SupportsTransparentBackColor, true);
 
@@ -49,60 +43,36 @@ namespace GreenBoy.Windows
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public bool DisplayEnabled { get; set; }
+        public bool DisplayEnabled { get => _bitmapDisplay.Enabled; set => _bitmapDisplay.Enabled = value; }
 
         public void PutDmgPixel(int color)
         {
-            _rgb[_i++] = Colors[color];
-            _i %= _rgb.Length;
+            _bitmapDisplay.PutDmgPixel(color);
         }
 
         public void PutColorPixel(int gbcRgb)
         {
-            if (_i >= _rgb.Length)
-            {
-                return;
-            }
-            _rgb[_i++] = TranslateGbcRgb(gbcRgb);
+            _bitmapDisplay.PutColorPixel(gbcRgb);
         }
 
         public static int TranslateGbcRgb(int gbcRgb)
         {
-            var r = (gbcRgb >> 0) & 0x1f;
-            var g = (gbcRgb >> 5) & 0x1f;
-            var b = (gbcRgb >> 10) & 0x1f;
-            var result = (r * 8) << 16;
-            result |= (g * 8) << 8;
-            result |= (b * 8) << 0;
-            return result;
+            return BitmapDisplay.TranslateGbcRgb(gbcRgb);
         }
 
         public void RequestRefresh()
         {
-            lock (_lockObject)
-            {
-                _doRefresh = true;
-                Monitor.PulseAll(_lockObject);
-            }
+            _bitmapDisplay.RequestRefresh();
         }
 
         public void WaitForRefresh()
         {
-            lock (_lockObject)
-            {
-                while (_doRefresh)
-                {
-                    try
-                    {
-                        Monitor.Wait(_lockObject, 1);
-                    }
-                    catch (ThreadInterruptedException)
-                    {
-                        break;
-                    }
-                }
-            }
+            _bitmapDisplay.WaitForRefresh();
         }
+
+        public void WaitForRefresh(CancellationToken token) => _bitmapDisplay.WaitForRefresh(token);
+
+        public void Reset() => _bitmapDisplay.Reset();
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -170,48 +140,18 @@ namespace GreenBoy.Windows
 
         public void Run(CancellationToken token)
         {
-            _doStop = false;
-            _doRefresh = false;
-            DisplayEnabled = true;
-
-            while (!_doStop)
-            {
-                lock (_lockObject)
-                {
-                    try
-                    {
-                        Monitor.Wait(_lockObject, 1);
-                    }
-                    catch (ThreadInterruptedException)
-                    {
-                        break;
-                    }
-                }
-
-                if (_doRefresh)
-                {
-                    FillAndDrawBuffer();
-
-                    lock (_lockObject)
-                    {
-                        _i = 0;
-                        _doRefresh = false;
-                        Monitor.PulseAll(_lockObject);
-                    }
-                }
-
-                _doStop = token.IsCancellationRequested;
-            }
+            _bitmapDisplay.Run(token);
         }
 
-        private void FillAndDrawBuffer()
+        private void FillAndDrawBuffer(object sender, byte[] frame)
         {
             try
             {
-                _lastFrame = new GameboyDisplayFrame(_rgb).ToBitmap();
+                _lastFrame = frame;
                 Invalidate();
             }
             catch (ObjectDisposedException) { }
+            OnFrameProduced?.Invoke(this, frame);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

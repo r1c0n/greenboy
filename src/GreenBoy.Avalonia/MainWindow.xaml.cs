@@ -30,7 +30,6 @@ namespace GreenBoy.Avalonia
         private byte[] _lastFrame;
         private readonly Emulator _emulator;
         private readonly GameboyOptions _gameboyOptions;
-        private CancellationTokenSource _cancellation;
 
         #endregion
 
@@ -44,7 +43,6 @@ namespace GreenBoy.Avalonia
             BindKeysToButtons();
             AdjustEmulatorScreenSize();
 
-            _cancellation = new CancellationTokenSource();
             _gameboyOptions = new GameboyOptions();
             _emulator = new Emulator(_gameboyOptions) { Display = new BitmapDisplay() };
 
@@ -144,7 +142,7 @@ namespace GreenBoy.Avalonia
 
             KeyDown += EmulatorSurface_KeyDown;
             KeyUp += EmulatorSurface_KeyUp;
-            Closed += (_, e) => { _cancellation.Cancel(); };
+            Closed += (_, e) => Dispose();
         }
 
         #endregion
@@ -166,17 +164,51 @@ namespace GreenBoy.Avalonia
 
             using var romFile = results.FirstOrDefault();
             var romPath = romFile?.TryGetLocalPath();
-            if (string.IsNullOrWhiteSpace(romPath)) return;
+            if (isDisposed || string.IsNullOrWhiteSpace(romPath)) return;
 
-            if (_emulator.Active)
+            var previousRom = _gameboyOptions.Rom;
+            var previousDisplay = _emulator.Display;
+            var display = new BitmapDisplay();
+            display.OnFrameProduced += UpdateDisplay;
+            try
             {
-                _emulator.Stop(_cancellation);
-                _cancellation = new CancellationTokenSource();
-                Thread.Sleep(100);
+                _gameboyOptions.Rom = romPath;
+                _emulator.Display = display;
+                _emulator.Run(CancellationToken.None);
+                previousDisplay.OnFrameProduced -= UpdateDisplay;
             }
+            catch (Exception exception) when (exception is IOException || exception is InvalidDataException || exception is UnauthorizedAccessException ||
+                exception is ArgumentException || exception is InvalidOperationException || exception is TimeoutException)
+            {
+                _gameboyOptions.Rom = previousRom;
+                _emulator.Display = previousDisplay;
+                display.OnFrameProduced -= UpdateDisplay;
+                await ShowLoadError(exception.Message);
+            }
+        }
 
-            _gameboyOptions.Rom = romPath;
-            _emulator.Run(_cancellation.Token);
+        private async Task ShowLoadError(string message)
+        {
+            var closeButton = new global::Avalonia.Controls.Button { Content = "OK" };
+            var dialog = new Window
+            {
+                Title = "Unable to load ROM",
+                SizeToContent = SizeToContent.WidthAndHeight,
+                CanResize = false,
+                Content = new StackPanel
+                {
+                    Margin = new Thickness(16),
+                    Spacing = 12,
+                    Width = 400,
+                    Children =
+                    {
+                        new TextBlock { Text = message, TextWrapping = global::Avalonia.Media.TextWrapping.Wrap },
+                        closeButton
+                    }
+                }
+            };
+            closeButton.Click += (_, __) => dialog.Close();
+            await dialog.ShowDialog(this);
         }
 
         private void Pause()
@@ -208,7 +240,7 @@ namespace GreenBoy.Avalonia
                     new FilePickerFileType("Bitmap") { Patterns = new[] { "*.bmp" } }
                 }
             });
-            if (screenshotFile == null) return;
+            if (isDisposed || screenshotFile == null) return;
 
             await using var stream = await screenshotFile.OpenWriteAsync();
             stream.SetLength(0);
@@ -234,32 +266,21 @@ namespace GreenBoy.Avalonia
 
         public void UpdateDisplay(object sender, byte[] frame)
         {
-            if (!Monitor.TryEnter(_updateLock)) return;
-
-            try
+            if (isDisposed) return;
+            Dispatcher.UIThread.Post(() =>
             {
-                Dispatcher.UIThread.InvokeAsync(() =>
+                if (isDisposed || (sender != null && !ReferenceEquals(sender, _emulator.Display))) return;
+                lock (_updateLock) _lastFrame = frame;
+                using var memoryStream = new MemoryStream(frame);
+
+                var imageBox = this.FindControl<Image>("ImageBox");
+                if (imageBox != null)
                 {
-                    _lastFrame = frame;
-                    using var memoryStream = new MemoryStream(frame);
-
-                    var imageBox = this.FindControl<Image>("ImageBox");
-                    if (imageBox != null)
-                    {
-                        var previousFrame = imageBox.Source as IDisposable;
-                        imageBox.Source = new Bitmap(memoryStream);
-                        previousFrame?.Dispose();
-                    }
-                });
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception);
-            }
-            finally
-            {
-                Monitor.Exit(_updateLock);
-            }
+                    var previousFrame = imageBox.Source as IDisposable;
+                    imageBox.Source = new Bitmap(memoryStream);
+                    previousFrame?.Dispose();
+                }
+            });
         }
 
         private void EmulatorSurface_KeyDown(object sender, KeyEventArgs e)
@@ -299,13 +320,21 @@ namespace GreenBoy.Avalonia
         protected virtual void Dispose(bool disposing)
         {
             if (isDisposed) return;
+            isDisposed = true;
 
             if (disposing)
             {
-                _cancellation.Dispose();
+                _emulator.Dispose();
+                _emulator.Display.OnFrameProduced -= UpdateDisplay;
+                var imageBox = this.FindControl<Image>("ImageBox");
+                if (imageBox != null)
+                {
+                    var frame = imageBox.Source as IDisposable;
+                    imageBox.Source = null;
+                    frame?.Dispose();
+                }
+                lock (_updateLock) _lastFrame = null;
             }
-
-            isDisposed = true;
         }
 
         #endregion

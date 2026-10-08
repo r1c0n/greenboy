@@ -53,6 +53,45 @@ namespace GreenBoy.Test.Unit.CLI
             Assert.That(output.ToString(), Is.Empty);
         }
 
+        [Test]
+        public void TruncatedRomReturnsAStartupErrorWithoutAStackTrace()
+        {
+            var rom = Path.GetTempFileName();
+            try
+            {
+                using var output = new StringWriter();
+                using var error = new StringWriter();
+
+                Assert.That(Program.Run(new[] { rom, "--headless" }, output, error), Is.EqualTo(1));
+                Assert.That(error.ToString(), Does.Contain("cartridge header").And.Not.Contain("Exception"));
+            }
+            finally
+            {
+                File.Delete(rom);
+            }
+        }
+
+        [Test]
+        public void EmulationFailureStopsTheSessionAndReturnsAnError()
+        {
+            var romPath = Path.GetTempFileName();
+            try
+            {
+                var rom = new byte[32 * 1024];
+                rom[0x100] = 0xd3; // An undefined instruction triggers a CPU worker failure.
+                File.WriteAllBytes(romPath, rom);
+                using var output = new StringWriter();
+                using var error = new StringWriter();
+
+                Assert.That(Program.Run(new[] { romPath, "--headless" }, output, error), Is.EqualTo(1));
+                Assert.That(error.ToString(), Does.Contain("No command for 0xD3").And.Not.Contain("Exception"));
+            }
+            finally
+            {
+                File.Delete(romPath);
+            }
+        }
+
         [TestCase(new[] { "game.gb", "--interactive" }, "game.gb")]
         [TestCase(new[] { "--interactive", "--rom", "game.gb" }, "game.gb")]
         [TestCase(new[] { "games/my game.gb", "--interactive" }, "games/my game.gb")]
