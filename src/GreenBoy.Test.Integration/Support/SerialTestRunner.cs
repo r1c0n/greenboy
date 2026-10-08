@@ -58,9 +58,9 @@ namespace GreenBoy.Test.Integration.Support
         public int transfer(int outgoing)
         {
             _text.Append((char)outgoing);
-            _os.Write(outgoing);
+            _os.Write((char)outgoing);
             _os.Flush();
-            return 0;
+            return 0xff;
         }
 
         public static bool IsInfiniteLoop(Gameboy gb)
@@ -106,7 +106,7 @@ namespace GreenBoy.Test.Integration.Support
 
         public bool externalClockPulsed()
         {
-            throw new System.NotImplementedException();
+            return false;
         }
     }
 }
