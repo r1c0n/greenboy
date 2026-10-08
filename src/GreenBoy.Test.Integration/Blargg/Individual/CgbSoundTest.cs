@@ -7,7 +7,7 @@ namespace GreenBoy.Test.Integration.Blargg.Individual
     [TestFixture, CancelAfter(1000 * 60 * 5)]
     public class CgbSoundTest
     {
-        public static object[] RomsFrom => ParametersProvider.getParameters("blargg\\cgb_sound");
+        public static object[] RomsFrom => ParametersProvider.getParameters("blargg/cgb_sound");
 
         [Test]
         [TestCaseSource(nameof(RomsFrom))]
