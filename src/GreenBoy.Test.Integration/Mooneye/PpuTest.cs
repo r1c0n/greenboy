@@ -5,7 +5,7 @@ using System.IO;
 namespace GreenBoy.Test.Integration.Mooneye
 {
     [Ignore("JVMFailed")]
-    [TestFixture, Timeout(1000 * 60)]
+    [TestFixture, CancelAfter(1000 * 60)]
     public class PpuTest
     {
         public static object[] RomsFrom => ParametersProvider.getParameters("mooneye/acceptance/ppu");

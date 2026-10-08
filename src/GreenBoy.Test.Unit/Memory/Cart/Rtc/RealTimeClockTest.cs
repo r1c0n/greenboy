@@ -44,22 +44,22 @@ namespace GreenBoy.Test.Unit.Memory.Cart.Rtc
         {
             _clock.Forward(new TimeSpan(511, 23, 59, 59));
 
-            Assert.False(_rtc.IsCounterOverflow());
+            Assert.That(_rtc.IsCounterOverflow(), Is.False);
 
             _clock.Forward(TimeSpan.FromSeconds(1));
 
             AssertClockEquals(0, 0, 0, 0);
-            Assert.True(_rtc.IsCounterOverflow());
+            Assert.That(_rtc.IsCounterOverflow(), Is.True);
 
             _clock.Forward(new TimeSpan(10, 5, 19, 4));
 
             AssertClockEquals(10, 5, 19, 4);
-            Assert.True(_rtc.IsCounterOverflow());
+            Assert.That(_rtc.IsCounterOverflow(), Is.True);
 
             _rtc.ClearCounterOverflow();
 
             AssertClockEquals(10, 5, 19, 4);
-            Assert.False(_rtc.IsCounterOverflow());
+            Assert.That(_rtc.IsCounterOverflow(), Is.False);
         }
 
         [Test]
@@ -71,7 +71,7 @@ namespace GreenBoy.Test.Unit.Memory.Cart.Rtc
 
             _rtc.SetHalt(true);
 
-            Assert.True(_rtc.IsHalt());
+            Assert.That(_rtc.IsHalt(), Is.True);
 
             _rtc.SetDayCounter(10);
             _rtc.SetHours(16);
@@ -81,7 +81,7 @@ namespace GreenBoy.Test.Unit.Memory.Cart.Rtc
             _clock.Forward(new TimeSpan(1, 1, 1, 1)); // should be ignored after unhalt
             _rtc.SetHalt(false);
 
-            Assert.False(_rtc.IsHalt());
+            Assert.That(_rtc.IsHalt(), Is.False);
 
             AssertClockEquals(10, 16, 21, 32);
 
@@ -92,10 +92,10 @@ namespace GreenBoy.Test.Unit.Memory.Cart.Rtc
 
         private void AssertClockEquals(int days, int hours, int minutes, int seconds)
         {
-            Assert.AreEqual(days, _rtc.GetDayCounter());
-            Assert.AreEqual(hours, _rtc.GetHours());
-            Assert.AreEqual(minutes, _rtc.GetMinutes());
-            Assert.AreEqual(seconds, _rtc.GetSeconds());
+            Assert.That(_rtc.GetDayCounter(), Is.EqualTo(days));
+            Assert.That(_rtc.GetHours(), Is.EqualTo(hours));
+            Assert.That(_rtc.GetMinutes(), Is.EqualTo(minutes));
+            Assert.That(_rtc.GetSeconds(), Is.EqualTo(seconds));
         }
     }
 }

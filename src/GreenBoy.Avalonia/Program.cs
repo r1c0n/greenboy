@@ -1,6 +1,5 @@
 ﻿using Avalonia;
-using Avalonia.Logging.Serilog;
-using Avalonia.ReactiveUI;
+using ReactiveUI.Avalonia;
 
 namespace GreenBoy.Avalonia
 {
@@ -15,8 +14,8 @@ namespace GreenBoy.Avalonia
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
-                .UseReactiveUI()
                 .UsePlatformDetect()
-                .LogToDebug();
+                .UseReactiveUI(_ => { })
+                .LogToTrace();
     }
 }

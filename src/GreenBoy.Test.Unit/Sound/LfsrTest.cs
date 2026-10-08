@@ -14,7 +14,7 @@ namespace GreenBoy.Test.Unit.Sound
             for (int i = 0; i < 100; i++)
             {
                 lfsr.NextBit(false);
-                Assert.AreNotEqual(previousValue, lfsr.Value);
+                Assert.That(lfsr.Value, Is.Not.EqualTo(previousValue));
                 previousValue = lfsr.Value;
             }
         }
@@ -27,7 +27,7 @@ namespace GreenBoy.Test.Unit.Sound
             for (int i = 0; i < 100; i++)
             {
                 lfsr.NextBit(true);
-                Assert.AreNotEqual(previousValue, lfsr.Value);
+                Assert.That(lfsr.Value, Is.Not.EqualTo(previousValue));
                 previousValue = lfsr.Value;
             }
         }

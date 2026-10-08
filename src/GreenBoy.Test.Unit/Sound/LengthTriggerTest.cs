@@ -87,8 +87,8 @@ namespace GreenBoy.Test.Unit.Sound
             begin();
             wchn(1, -1);
             wchn(4, 0x40);
-            Assert.True(lengthCounter.Enabled);
-            Assert.AreEqual(0, lengthCounter.Length);
+            Assert.That(lengthCounter.Enabled, Is.True);
+            Assert.That(lengthCounter.Length, Is.EqualTo(0));
         }
 
         /*
@@ -261,11 +261,11 @@ namespace GreenBoy.Test.Unit.Sound
             wchn(4, 0x40);
             wchn(4, 0xc0);
             delayApu(maxlen - 3);
-            Assert.True(lengthCounter.Enabled);
-            Assert.AreNotEqual(0, lengthCounter.Length);
+            Assert.That(lengthCounter.Enabled, Is.True);
+            Assert.That(lengthCounter.Length, Is.Not.EqualTo(0));
             delayApu(1);
-            Assert.True(lengthCounter.Enabled);
-            Assert.AreEqual(0, lengthCounter.Length);
+            Assert.That(lengthCounter.Enabled, Is.True);
+            Assert.That(lengthCounter.Length, Is.EqualTo(0));
         }
 
         /*
@@ -312,7 +312,7 @@ namespace GreenBoy.Test.Unit.Sound
 
         private void endPassive(int remainingLength)
         {
-            Assert.AreEqual(remainingLength, lengthCounter.Length);
+            Assert.That(lengthCounter.Length, Is.EqualTo(remainingLength));
         }
     }
 }

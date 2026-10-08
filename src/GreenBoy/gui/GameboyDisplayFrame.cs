@@ -1,5 +1,3 @@
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,28 +28,39 @@ namespace GreenBoy.gui
 
         public byte[] ToBitmap()
         {
-            var pixels = new Image<Rgba32>(DisplayWidth, DisplayHeight);
+            // A 24-bit BMP uses bottom-up BGR rows, padded to four-byte boundaries.
+            const int headerSize = 54;
+            var stride = (DisplayWidth * 3 + 3) & ~3;
+            var imageSize = stride * DisplayHeight;
+            using var memoryStream = new MemoryStream(headerSize + imageSize);
+            using var writer = new BinaryWriter(memoryStream);
+            writer.Write((ushort)0x4d42); // BM
+            writer.Write(headerSize + imageSize);
+            writer.Write(0); // Reserved
+            writer.Write(headerSize);
+            writer.Write(40); // BITMAPINFOHEADER size
+            writer.Write(DisplayWidth);
+            writer.Write(DisplayHeight);
+            writer.Write((ushort)1); // Color planes
+            writer.Write((ushort)24); // Bits per pixel
+            writer.Write(0); // Uncompressed
+            writer.Write(imageSize);
+            writer.Write(0); // Horizontal resolution
+            writer.Write(0); // Vertical resolution
+            writer.Write(0); // Palette colors
+            writer.Write(0); // Important colors
 
-            var x = 0;
-            var y = 0;
-
-            foreach (var pixel in _pixels)
+            for (var y = DisplayHeight - 1; y >= 0; y--)
             {
-                if (x == DisplayWidth)
+                for (var x = 0; x < DisplayWidth; x++)
                 {
-                    x = 0;
-                    y++;
+                    var (r, g, b) = _pixels[y * DisplayWidth + x].ToRgb();
+                    writer.Write((byte)b);
+                    writer.Write((byte)g);
+                    writer.Write((byte)r);
                 }
-
-                var (r, g, b) = pixel.ToRgb();
-                pixels[x, y] = new Rgba32((byte)r, (byte)g, (byte)b, 255);
-
-                x++;
+                for (var padding = DisplayWidth * 3; padding < stride; padding++) writer.Write((byte)0);
             }
-
-            using var memoryStream = new MemoryStream();
-            pixels.SaveAsBmp(memoryStream);
-            pixels.Dispose();
             return memoryStream.ToArray();
         }
     }

@@ -1,6 +1,4 @@
 ﻿using GreenBoy.gpu;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -9,6 +7,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
+using GreenBoy.gui;
 using Image = System.Drawing.Image;
 
 namespace GreenBoy.Windows
@@ -22,8 +21,7 @@ namespace GreenBoy.Windows
         public static readonly int[] Colors = { 0xe6f8da, 0x99c886, 0x437969, 0x051f2a };
 
         private readonly int[] _rgb;
-        private readonly MemoryStream _imageStream = new MemoryStream();
-        private readonly Image<Rgba32> _imageBuffer = new Image<Rgba32>(DisplayWidth, DisplayHeight);
+        private volatile byte[] _lastFrame;
 
         private bool _doStop;
         private bool _doRefresh;
@@ -34,6 +32,7 @@ namespace GreenBoy.Windows
         public BitmapDisplayControl()
         {
             _rgb = new int[DisplayWidth * DisplayHeight];
+            _lastFrame = new GameboyDisplayFrame(_rgb).ToBitmap();
             SetStyle(ControlStyles.Opaque | ControlStyles.Selectable, false);
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.SupportsTransparentBackColor, true);
 
@@ -143,9 +142,8 @@ namespace GreenBoy.Windows
             {
                 if (DisplayEnabled)
                 {
-                    _imageStream.Seek(0, SeekOrigin.Begin);
-                    _imageBuffer.SaveAsBmp(_imageStream);
-                    using var img = Image.FromStream(_imageStream);
+                    using var imageStream = new MemoryStream(_lastFrame);
+                    using var img = Image.FromStream(imageStream);
 
                     e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor; // Setting interpolation mode
 
@@ -167,10 +165,7 @@ namespace GreenBoy.Windows
 
         public void SaveLastFrame(string path)
         {
-            using var fs = File.OpenWrite(path);
-            _imageBuffer.SaveAsBmp(fs);
-            fs.Flush();
-            fs.Close();
+            File.WriteAllBytes(path, _lastFrame);
         }
 
         public void Run(CancellationToken token)
@@ -213,13 +208,7 @@ namespace GreenBoy.Windows
         {
             try
             {
-                var pi = 0;
-                while (pi < _rgb.Length)
-                {
-                    var (r, g, b) = ToRgb(_rgb[pi]);
-                    _imageBuffer[pi % DisplayWidth, pi++ / DisplayWidth] = new Rgba32((byte)r, (byte)g, (byte)b, 255);
-                }
-
+                _lastFrame = new GameboyDisplayFrame(_rgb).ToBitmap();
                 Invalidate();
             }
             catch (ObjectDisposedException) { }

@@ -31,7 +31,7 @@ namespace GreenBoy.Test.Unit.GPU
 
         private static void AssertArrayEquals(IReadOnlyList<int> expected, IReadOnlyList<int> actual)
         {
-            Assert.AreEqual(expected.Count, actual.Count);
+            Assert.That(actual.Count, Is.EqualTo(expected.Count));
 
             for (var i = 0; i < expected.Count; i++)
             {

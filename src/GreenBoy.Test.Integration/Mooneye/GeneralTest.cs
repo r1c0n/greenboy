@@ -4,7 +4,7 @@ using System.IO;
 
 namespace GreenBoy.Test.Integration.Mooneye
 {
-    [TestFixture, Timeout(1000 * 60)]
+    [TestFixture, CancelAfter(1000 * 60)]
     public class GeneralTest
     {
         public static object[] RomsFrom => ParametersProvider.getParameters("mooneye/acceptance");

@@ -23,7 +23,7 @@ namespace GreenBoy.Test.Unit.GPU
         public void TestEnqueue()
         {
             _fifo.Enqueue8Pixels(Zip(0b11001001, 0b11110000, false), TileAttributes.Empty);
-            Assert.AreEqual(new List<int> { 3, 3, 2, 2, 1, 0, 0, 1 }, ArrayQueueAsList(_fifo.Pixels));
+            Assert.That(ArrayQueueAsList(_fifo.Pixels), Is.EqualTo(new List<int> { 3, 3, 2, 2, 1, 0, 0, 1 }));
         }
 
         [Test]
@@ -31,18 +31,18 @@ namespace GreenBoy.Test.Unit.GPU
         {
             _fifo.Enqueue8Pixels(Zip(0b11001001, 0b11110000, false), TileAttributes.Empty);
             _fifo.Enqueue8Pixels(Zip(0b10101011, 0b11100111, false), TileAttributes.Empty);
-            Assert.AreEqual(0b11, _fifo.DequeuePixel());
-            Assert.AreEqual(0b11, _fifo.DequeuePixel());
-            Assert.AreEqual(0b10, _fifo.DequeuePixel());
-            Assert.AreEqual(0b10, _fifo.DequeuePixel());
-            Assert.AreEqual(0b01, _fifo.DequeuePixel());
+            Assert.That(_fifo.DequeuePixel(), Is.EqualTo(0b11));
+            Assert.That(_fifo.DequeuePixel(), Is.EqualTo(0b11));
+            Assert.That(_fifo.DequeuePixel(), Is.EqualTo(0b10));
+            Assert.That(_fifo.DequeuePixel(), Is.EqualTo(0b10));
+            Assert.That(_fifo.DequeuePixel(), Is.EqualTo(0b01));
         }
 
         [Test]
         public void TestZip()
         {
-            Assert.AreEqual(new int[] { 3, 3, 2, 2, 1, 0, 0, 1 }, Zip(0b11001001, 0b11110000, false));
-            Assert.AreEqual(new int[] { 1, 0, 0, 1, 2, 2, 3, 3 }, Zip(0b11001001, 0b11110000, true));
+            Assert.That(Zip(0b11001001, 0b11110000, false), Is.EqualTo(new int[] { 3, 3, 2, 2, 1, 0, 0, 1 }));
+            Assert.That(Zip(0b11001001, 0b11110000, true), Is.EqualTo(new int[] { 1, 0, 0, 1, 2, 2, 3, 3 }));
         }
 
         private static int[] Zip(int data1, int data2, bool reverse) => Fetcher.Zip(data1, data2, reverse, new int[8]);

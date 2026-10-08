@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using GreenBoy.controller;
 using GreenBoy.gui;
@@ -39,17 +40,13 @@ namespace GreenBoy.Avalonia
         {
             Opened += OnWindowOpenedBindWindowEvents;
             InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
-
             BuildMenuViewModel();
             BindKeysToButtons();
             AdjustEmulatorScreenSize();
 
             _cancellation = new CancellationTokenSource();
             _gameboyOptions = new GameboyOptions();
-            _emulator = new Emulator(_gameboyOptions);
+            _emulator = new Emulator(_gameboyOptions) { Display = new BitmapDisplay() };
 
             ConnectEmulatorToUI();
         }
@@ -156,6 +153,21 @@ namespace GreenBoy.Avalonia
 
         private async Task LoadROM()
         {
+            var results = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "Load Game Boy ROM",
+                AllowMultiple = false,
+                FileTypeFilter = new[]
+                {
+                    new FilePickerFileType("Game Boy ROMs") { Patterns = new[] { "*.gb", "*.gbc" } },
+                    FilePickerFileTypes.All
+                }
+            });
+
+            using var romFile = results.FirstOrDefault();
+            var romPath = romFile?.TryGetLocalPath();
+            if (string.IsNullOrWhiteSpace(romPath)) return;
+
             if (_emulator.Active)
             {
                 _emulator.Stop(_cancellation);
@@ -163,36 +175,8 @@ namespace GreenBoy.Avalonia
                 Thread.Sleep(100);
             }
 
-            OpenFileDialog openFileDialog = new OpenFileDialog()
-            {
-                AllowMultiple = false
-            };
-
-            if (openFileDialog.Filters == null)
-                openFileDialog.Filters = new List<FileDialogFilter>();
-
-            openFileDialog.Filters.Add(new FileDialogFilter()
-            {
-                Name = "Gameboy ROM (*.gb)",
-                Extensions = { "gb" }
-            });
-            openFileDialog.Filters.Add(new FileDialogFilter()
-            {
-                Name = "All files(*.*)",
-                Extensions = { "*.*" }
-            });
-
-            var results = await openFileDialog.ShowAsync(this).ConfigureAwait(true);
-
-            var (success, romPath) = results.Any()
-                ? (true, results.FirstOrDefault())
-                : (false, null);
-
-            if (success)
-            {
-                _gameboyOptions.Rom = romPath;
-                _emulator.Run(_cancellation.Token);
-            }
+            _gameboyOptions.Rom = romPath;
+            _emulator.Run(_cancellation.Token);
         }
 
         private void Pause()
@@ -207,39 +191,28 @@ namespace GreenBoy.Avalonia
 
         private async Task Screenshot()
         {
-            _emulator.TogglePause();
-
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-
-            if (saveFileDialog.Filters == null)
-                saveFileDialog.Filters = new List<FileDialogFilter>();
-
-            saveFileDialog.Filters.Add(new FileDialogFilter()
+            byte[] frame;
+            lock (_updateLock)
             {
-                Name = "Bitmap (*.bmp)",
-                Extensions = { "*.bmp" }
-            });
-
-            var result = await saveFileDialog.ShowAsync(this).ConfigureAwait(true);
-
-            var (success, screenshotPath) = !string.IsNullOrWhiteSpace(result)
-                ? (true, result)
-                : (false, null);
-
-            if (success)
-            {
-                try
-                {
-                    Monitor.Enter(_updateLock);
-                    File.WriteAllBytes(screenshotPath, _lastFrame);
-                }
-                finally
-                {
-                    Monitor.Exit(_updateLock);
-                }
+                frame = _lastFrame;
             }
+            if (frame == null) return;
 
-            _emulator.TogglePause();
+            using var screenshotFile = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                Title = "Save screenshot",
+                DefaultExtension = "bmp",
+                SuggestedFileName = "GreenBoy.bmp",
+                FileTypeChoices = new[]
+                {
+                    new FilePickerFileType("Bitmap") { Patterns = new[] { "*.bmp" } }
+                }
+            });
+            if (screenshotFile == null) return;
+
+            await using var stream = await screenshotFile.OpenWriteAsync();
+            stream.SetLength(0);
+            await stream.WriteAsync(frame);
         }
 
         #endregion
@@ -273,7 +246,9 @@ namespace GreenBoy.Avalonia
                     var imageBox = this.FindControl<Image>("ImageBox");
                     if (imageBox != null)
                     {
+                        var previousFrame = imageBox.Source as IDisposable;
                         imageBox.Source = new Bitmap(memoryStream);
+                        previousFrame?.Dispose();
                     }
                 });
             }

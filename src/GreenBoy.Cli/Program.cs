@@ -13,7 +13,7 @@ namespace GreenBoy.Cli
         {
             var cancellation = new CancellationTokenSource();
             var arguments = GameboyOptions.Parse(args);
-            var emulator = new Emulator(arguments);
+            var emulator = new Emulator(arguments) { Display = new BitmapDisplay() };
 
             if (!arguments.RomSpecified)
             {
@@ -51,7 +51,10 @@ namespace GreenBoy.Cli
         {
             Console.Clear();
             Console.SetCursorPosition(0, 0);
-            Console.WindowHeight = 92;
+            if (OperatingSystem.IsWindows())
+            {
+                Console.WindowHeight = 92;
+            }
 
             _controls = new Dictionary<ConsoleKey, Button>
             {

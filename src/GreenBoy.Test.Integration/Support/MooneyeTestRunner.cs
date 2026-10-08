@@ -7,6 +7,7 @@ using GreenBoy.sound;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace GreenBoy.Test.Integration.Support
 {
@@ -47,13 +48,16 @@ namespace GreenBoy.Test.Integration.Support
             _os = os;
         }
 
-        public bool RunTest()
+        public bool RunTest(CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             _tracer.Collect(_gb.Cpu.Registers);
 
             int divider = 0;
+            int ticks = 0;
             while (!IsByteSequenceAtPc(0x00, 0x18, 0xfd))
             {
+                if ((++ticks & 0x3ff) == 0) cancellationToken.ThrowIfCancellationRequested();
                 _gb.Tick();
                 if (++divider >= (_gb.SpeedMode.GetSpeedMode() == 2 ? 1 : 4))
                 {

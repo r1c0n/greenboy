@@ -300,7 +300,7 @@ namespace GreenBoy.Test.Unit.Sound
 
         private void shouldBeOn()
         {
-            Assert.True(sweep.IsEnabled());
+            Assert.That(sweep.IsEnabled(), Is.True);
         }
 
         /*
@@ -318,14 +318,14 @@ namespace GreenBoy.Test.Unit.Sound
 
         private void shouldBeAlmostOff()
         {
-            Assert.True(sweep.IsEnabled());
+            Assert.That(sweep.IsEnabled(), Is.True);
             delayApu(1);
             shouldBeOff();
         }
 
         private void shouldBeOff()
         {
-            Assert.False(sweep.IsEnabled());
+            Assert.That(sweep.IsEnabled(), Is.False);
         }
 
         /*

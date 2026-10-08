@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace GreenBoy.gui
 {
-    public class BitmapDisplay : IDisplay
+    public class BitmapDisplay : IDisplay, IRunnable
     {
         public static readonly int DisplayWidth = 160;
         public static readonly int DisplayHeight = 144;

@@ -4,7 +4,7 @@ using System.IO;
 
 namespace GreenBoy.Test.Integration.Blargg.Individual
 {
-    [TestFixture, Timeout(1000 * 60 * 1)]
+    [TestFixture, CancelAfter(1000 * 60 * 1)]
     public class MemTiming2Test
     {
         public static object[] RomsFrom => ParametersProvider.getParameters("blargg/mem_timing-2");

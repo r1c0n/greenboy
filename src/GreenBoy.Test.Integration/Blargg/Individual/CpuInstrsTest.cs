@@ -4,7 +4,7 @@ using System.IO;
 
 namespace GreenBoy.Test.Integration.Blargg.Individual
 {
-    [TestFixture, Timeout(1000 * 60)]
+    [TestFixture, CancelAfter(1000 * 60)]
     public class CpuInstrsTest
     {
         public static object[] RomsFrom => ParametersProvider.getParameters("blargg/cpu_instrs");

@@ -4,7 +4,7 @@ using static GreenBoy.Test.Integration.Support.RomTestUtils;
 
 namespace GreenBoy.Test.Integration.Blargg
 {
-    [TestFixture]
+    [TestFixture, CancelAfter(1000 * 60 * 5)]
     public class BlarggRomTest
     {
         [Test]

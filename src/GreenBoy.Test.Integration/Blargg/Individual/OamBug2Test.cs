@@ -4,7 +4,7 @@ using System.IO;
 
 namespace GreenBoy.Test.Integration.Blargg.Individual
 {
-    [TestFixture, Timeout(1000 * 60 * 3)]
+    [TestFixture, CancelAfter(1000 * 60 * 3)]
     public class OamBug2Test
     {
         public static object[] RomsFrom => ParametersProvider.getParameters("blargg/oam_bug-2");

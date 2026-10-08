@@ -263,7 +263,7 @@ namespace GreenBoy.Test.Unit.Sound
         {
             if (lengthCounter.Enabled)
             {
-                Assert.AreNotEqual(0, lengthCounter.Length);
+                Assert.That(lengthCounter.Length, Is.Not.EqualTo(0));
             }
         }
 
@@ -289,7 +289,7 @@ namespace GreenBoy.Test.Unit.Sound
 
         private void shouldBeOff()
         {
-            Assert.True(lengthCounter.Enabled && lengthCounter.Length == 0);
+            Assert.That(lengthCounter.Enabled && lengthCounter.Length == 0, Is.True);
         }
 
         private void delay(int cpuCycles)

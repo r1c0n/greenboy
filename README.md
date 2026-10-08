@@ -11,20 +11,53 @@ A continuation of [CoreBoy Green (CBG)](https://gitlab.com/coreboy-green/emu), t
 
 ## Prerequisites
 
-*  Visual Studio 2022
-* .NET Core 3.1
+* [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+* An editor or IDE with .NET 10 support
+
+CLI image decoding uses [SkiaSharp](https://www.nuget.org/packages/SkiaSharp), licensed under MIT. BMP frame encoding and Windows screenshots require no additional imaging package.
 
 ## Usage
 
+Build the solution:
+
+```sh
+dotnet build src/GreenBoy.sln
+```
+
+The WinForms project requires Windows. On macOS or Linux, build or run the Avalonia or CLI project directly.
+
 ### Windows
 
-Just run `GreenBoy.Windows` and load a ROM from the file menu!
+```sh
+dotnet run --project src/GreenBoy.Windows
+```
+
+Load a ROM from the Emulator menu. To publish a self-contained Windows build, run `src/self-contained.cmd`.
 
 ### Mac / Linux
 
-Command line:
+```sh
+dotnet run --project src/GreenBoy.Avalonia
+```
 
-Just run `GreenBoy.Avalonia` and load a ROM from the file menu!
+Load a ROM from the Emulator menu.
+
+### CLI
+
+```sh
+dotnet run --project src/GreenBoy.Cli -- game.gb
+```
+
+Add `--interactive` to play in the console.
+
+## Tests
+
+```sh
+dotnet test src/GreenBoy.Test.Unit
+dotnet test src/GreenBoy.Test.Integration
+```
+
+Integration tests use the bundled Blargg and Mooneye ROMs. Some ROMs expose existing emulation failures or reach their test timeout.
 
 ## Controls
 

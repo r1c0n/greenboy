@@ -14,12 +14,12 @@
     </Grid.RowDefinitions>
 
     <DockPanel Background="White" Grid.Row="0">
-      <Menu DockPanel.Dock="Top" Items="{Binding MenuItems}">
+      <Menu DockPanel.Dock="Top" ItemsSource="{Binding MenuItems}">
 
         <Menu.Styles>
           <Style Selector="MenuItem">
             <Setter Property="Header" Value="{Binding Header}"/>
-            <Setter Property="Items" Value="{Binding Items}"/>
+            <Setter Property="ItemsSource" Value="{Binding Items}"/>
             <Setter Property="Command" Value="{Binding Command}"/>
             <Setter Property="CommandParameter" Value="{Binding CommandParameter}"/>
           </Style>

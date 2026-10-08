@@ -4,7 +4,7 @@ using System.IO;
 
 namespace GreenBoy.Test.Integration.Blargg.Individual
 {
-    [TestFixture, Timeout(1000 * 60 * 2)]
+    [TestFixture, CancelAfter(1000 * 60 * 2)]
     public class DmgSound2Test
     {
         public static object[] RomsFrom => ParametersProvider.getParameters("blargg/dmg_sound-2");

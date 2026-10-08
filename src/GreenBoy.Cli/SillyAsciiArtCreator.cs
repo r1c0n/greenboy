@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
+using SkiaSharp;
 
 namespace GreenBoy.Cli
 {
@@ -37,8 +35,9 @@ namespace GreenBoy.Cli
 
         public static string GenerateArt(byte[] jpg)
         {
-            var image = Image.Load(jpg);
-            image.Mutate(x => x.Resize(106, 72));
+            using var source = SKBitmap.Decode(jpg);
+            using var image = source.Resize(new SKImageInfo(106, 72),
+                new SKSamplingOptions(SKCubicResampler.Mitchell));
 
             var map = Map.OrderBy(kvp => kvp.Key).ToList();
             var sb = new StringBuilder();
@@ -47,7 +46,7 @@ namespace GreenBoy.Cli
             {
                 for (var x = 0; x < image.Width; x++)
                 {
-                    var pixel = image[x, y];
+                    var pixel = image.GetPixel(x, y);
                     var currentChar = MapToAscii(map, pixel);
 
                     sb.Append(currentChar);
@@ -56,17 +55,15 @@ namespace GreenBoy.Cli
                 sb.Append(Environment.NewLine);
             }
 
-            image.Dispose();
-
             return PostProcessOutput(sb);
         }
 
-        private static string MapToAscii(IEnumerable<KeyValuePair<float, string>> map, Rgba32 pixel)
+        private static string MapToAscii(IEnumerable<KeyValuePair<float, string>> map, SKColor pixel)
         {
             var currentChar = "";
             foreach (var (key, value) in map)
             {
-                if (key <= pixel.R)
+                if (key <= pixel.Red)
                 {
                     currentChar = value;
                 }

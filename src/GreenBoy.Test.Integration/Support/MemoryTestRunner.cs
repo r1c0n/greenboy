@@ -6,6 +6,7 @@ using GreenBoy.serial;
 using GreenBoy.sound;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace GreenBoy.Test.Integration.Support
 {
@@ -29,14 +30,17 @@ namespace GreenBoy.Test.Integration.Support
             this._os = os;
         }
 
-        public TestResult RunTest()
+        public TestResult RunTest(CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             _tracer.Collect(_gb.Cpu.Registers);
 
             int status = 0x80;
             int divider = 0;
+            int ticks = 0;
             while (status == 0x80 && !SerialTestRunner.IsInfiniteLoop(_gb))
             {
+                if ((++ticks & 0x3ff) == 0) cancellationToken.ThrowIfCancellationRequested();
                 _gb.Tick();
                 if (++divider >= (_gb.SpeedMode.GetSpeedMode() == 2 ? 1 : 4))
                 {

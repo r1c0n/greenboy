@@ -2,10 +2,12 @@ using GreenBoy.sound;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System;
+using System.Runtime.Versioning;
 using System.Threading;
 
 namespace GreenBoy.gui
 {
+    [SupportedOSPlatform("windows")]
     public class WinSound : ISoundOutput
     {
         private readonly byte[] _buffer = new byte[BufferSize];
@@ -63,6 +65,7 @@ namespace GreenBoy.gui
         }
     }
 
+    [SupportedOSPlatform("windows")]
     public class AudioPlaybackEngine : IDisposable
     {
         private IWavePlayer _outputDevice;
@@ -71,7 +74,7 @@ namespace GreenBoy.gui
 
         public AudioPlaybackEngine(int sampleRate = 44100, int channelCount = 2)
         {
-            _outputDevice = new WasapiOut();
+            _outputDevice = new WasapiPlayerBuilder().Build();
             _mixer = new MixingSampleProvider(WaveFormat.CreateIeeeFloatWaveFormat(sampleRate, channelCount))
             {
                 ReadFully = true
